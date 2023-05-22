@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,7 +11,6 @@ class AP3GameMode : public AGameModeBase
 
 public:
 	AP3GameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer);
 };
-
-
-
