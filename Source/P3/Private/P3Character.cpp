@@ -1,6 +1,7 @@
 #include "P3Character.h"
 #include "P3HeroController.h"
 #include "P3StatComponent.h"
+#include "P3GameInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -9,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 AP3Character::AP3Character()
 {
@@ -50,6 +52,8 @@ void AP3Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	InitStat(StatComponent->GetLevel());
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -71,6 +75,20 @@ void AP3Character::PostInitializeComponents()
 void AP3Character::Attack()
 {
 	
+}
+
+void AP3Character::InitStat(int32 Level)
+{
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (nullptr != P3GameInstance)
+	{
+		FP3CharacterData* Data = P3GameInstance->GetP3CharacterData(1);
+		StatComponent->SetStatFromDataTable(Level, Data);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
+	}
 }
 
 void AP3Character::Move(const FInputActionValue& Value)

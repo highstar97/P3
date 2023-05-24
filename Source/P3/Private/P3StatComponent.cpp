@@ -1,9 +1,15 @@
 #include "P3StatComponent.h"
+#include "P3GameInstance.h"
 
-UP3StatComponent::UP3StatComponent()
+void UP3StatComponent::SetStatFromDataTable(int32 _Level, FP3CharacterData* Data)
 {
-	PrimaryComponentTick.bCanEverTick = false;
-
+	this->Level = _Level;
+	this->MaxHP = Data->MaxHP;
+	this->CurrentHP = this->MaxHP;
+	this->MaxMP = Data->MaxMP;
+	this->CurrentMP = this->MaxMP;
+	this->CurrentExp = 0;
+	this->RequiredExp = Data->RequiredExp;
 }
 
 void UP3StatComponent::BeginPlay()
