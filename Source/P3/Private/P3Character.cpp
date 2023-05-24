@@ -1,5 +1,6 @@
 #include "P3Character.h"
 #include "P3HeroController.h"
+#include "P3StatComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -35,6 +36,8 @@ AP3Character::AP3Character()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
 }
 
 void AP3Character::BeginPlay()
