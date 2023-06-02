@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -38,6 +39,18 @@ AP3Character::AP3Character()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	HPBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	HPBarWidgetComponent->SetupAttachment(RootComponent);
+	HPBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	HPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 110.0f));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HPBAR(TEXT("/Game/Blueprints/UI/UI_HPBar.UI_HPBar_C"));
+	if (UI_HPBAR.Succeeded())
+	{
+		HPBarWidgetComponent->SetWidgetClass(UI_HPBAR.Class);
+		HPBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 30.0f));
+	}
+
 
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
 }
