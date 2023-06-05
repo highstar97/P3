@@ -2,6 +2,7 @@
 #include "P3HeroController.h"
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
+#include "P3HPBarWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -51,7 +52,6 @@ AP3Character::AP3Character()
 		HPBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 30.0f));
 	}
 
-
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
 }
 
@@ -66,7 +66,17 @@ void AP3Character::BeginPlay()
 		}
 	}
 
-	InitStat(StatComponent->GetLevel());
+	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
+	if (HPBarWidget != nullptr)
+	{
+		HPBarWidget->BindCharacterStat(StatComponent);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] HPBarWidget is NULL."));
+	}
+
+	InitStat();
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -90,13 +100,13 @@ void AP3Character::Attack()
 	
 }
 
-void AP3Character::InitStat(int32 Level)
+void AP3Character::InitStat()
 {
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (nullptr != P3GameInstance)
 	{
-		FP3CharacterData* Data = P3GameInstance->GetP3CharacterData(1);
-		StatComponent->SetStatFromDataTable(Level, Data);
+		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3CharacterData(1);
+		StatComponent->SetStatFromDataTable(1, LevelBasedData);
 	}
 	else
 	{

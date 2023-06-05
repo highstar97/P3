@@ -6,6 +6,8 @@
 
 struct FP3CharacterData;
 
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3StatComponent : public UActorComponent
 {
@@ -14,13 +16,14 @@ class P3_API UP3StatComponent : public UActorComponent
 public:	
 	UP3StatComponent() : Level(1), CurrentHP(0.0f), MaxHP(0.0f), CurrentMP(0.0f), MaxMP(0.0f), Attack(50.0f), CurrentExp(0.0f), RequiredExp(0.0f)
 	{
+		LevelBasedCurrentStat = nullptr;
 		PrimaryComponentTick.bCanEverTick = false;
 	}
 
 	void SetStatFromDataTable(int32 _Level, FP3CharacterData* Data);
 
 	int32 GetLevel() { return Level; }
-	void SetLevel(int32 _Level) { this->Level = _Level; }
+	void SetLevel(int32 _Level);
 
 	float GetCurrentHP() { return CurrentHP; }
 	void SetCurrentHP(float _CurrentHP) { this->CurrentHP = _CurrentHP; }
@@ -42,6 +45,10 @@ public:
 
 	float GetRequiredExp() { return RequiredExp; }
 	void SetRequiredExp(float _RequiredExp) { this->RequiredExp = _RequiredExp; }
+
+	float GetHPRatio() { return GetCurrentHP() / GetMaxHP(); }
+
+	FOnHPChangedDelegate OnHPChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -70,4 +77,6 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 		float RequiredExp;
+
+	FP3CharacterData* LevelBasedCurrentStat;
 };

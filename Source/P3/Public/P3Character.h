@@ -32,7 +32,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
 	virtual void Attack();
-	virtual void InitStat(int32 Level);
+	virtual void InitStat();
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
