@@ -53,6 +53,8 @@ AP3Character::AP3Character()
 	}
 
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
+
+	SetCharacterType(ECharacterType::None);
 }
 
 void AP3Character::BeginPlay()
@@ -97,7 +99,7 @@ void AP3Character::PostInitializeComponents()
 
 void AP3Character::Attack()
 {
-	
+
 }
 
 void AP3Character::InitStat()
@@ -112,6 +114,32 @@ void AP3Character::InitStat()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
 	}
+}
+
+float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
+{
+	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentStat() == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat. "));
+		return 0.0f;
+	}
+
+	float InitialDamage = EventInstigatorActor->StatComponent->GetAttack();
+
+	// Team Judgment
+	if (this->GetCharacterType() == ECharacterType::None || EventInstigatorActor->GetCharacterType() == ECharacterType::None)
+	{
+		return 0.0f;
+	}
+
+	if (this->GetCharacterType() == EventInstigatorActor->GetCharacterType())
+	{
+		return 0.0f;
+	}
+
+	float FinalDamage = this->StatComponent->TakeDamage(InitialDamage);
+
+	return FinalDamage;
 }
 
 void AP3Character::Move(const FInputActionValue& Value)

@@ -15,6 +15,14 @@ class UInputMappingContext;
 class UInputAction;
 class UP3StatComponent;
 
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+	None	UMETA(DisplayName = "None"),
+	Hero	UMETA(DisplayName = "Hero"),
+	Enemy	UMETA(DisplayName = "Enemy")
+};
+
 UCLASS(config=Game)
 class AP3Character : public ACharacter
 {
@@ -33,6 +41,12 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void Attack();
 	virtual void InitStat();
+
+	ECharacterType GetCharacterType() const { return CharacterType; }
+	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
+
+	UFUNCTION(BlueprintCallable)
+	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -64,4 +78,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+		ECharacterType CharacterType = ECharacterType::None;
 };

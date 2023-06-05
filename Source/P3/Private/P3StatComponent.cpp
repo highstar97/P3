@@ -5,7 +5,7 @@ void UP3StatComponent::SetStatFromDataTable(int32 _Level, FP3CharacterData* Leve
 {
 	if (LevelBasedCurrentStat == nullptr)
 	{
-		LevelBasedCurrentStat = LevelBasedData;
+		SetLevelBasedCurrentStat(LevelBasedData);
 	}
 
 	SetLevel(_Level);
@@ -29,6 +29,28 @@ void UP3StatComponent::SetLevel(int32 _Level)
 	SetCurrentExp(0);
 	
 	OnHPChanged.Broadcast();
+}
+
+void UP3StatComponent::SetCurrentHP(float _CurrentHP)
+{
+	this->CurrentHP = _CurrentHP;
+
+	OnHPChanged.Broadcast();
+
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		CurrentHP = 0.0f;
+	}
+}
+
+float UP3StatComponent::TakeDamage(float _Damage)
+{
+	// Damage logic : Damage = Attack
+	float Damage = _Damage;
+	
+	SetCurrentHP(FMath::Clamp(GetCurrentHP() - Damage,0.0f,GetMaxHP()));
+
+	return Damage;
 }
 
 void UP3StatComponent::BeginPlay()

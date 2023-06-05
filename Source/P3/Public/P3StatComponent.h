@@ -22,31 +22,36 @@ public:
 
 	void SetStatFromDataTable(int32 _Level, FP3CharacterData* Data);
 
-	int32 GetLevel() { return Level; }
+	int32 GetLevel() const { return Level; }
 	void SetLevel(int32 _Level);
 
-	float GetCurrentHP() { return CurrentHP; }
-	void SetCurrentHP(float _CurrentHP) { this->CurrentHP = _CurrentHP; }
+	float GetCurrentHP() const { return CurrentHP; }
+	void SetCurrentHP(float _CurrentHP);
 
-	float GetMaxHP() { return MaxHP; }
+	float GetMaxHP() const { return MaxHP; }
 	void SetMaxHP(float _MaxHP) { this->MaxHP = _MaxHP; }
 
-	float GetCurrentMP() { return CurrentMP; }
+	float GetCurrentMP() const { return CurrentMP; }
 	void SetCurrentMP(float _CurrentMP) { this->CurrentMP = _CurrentMP; }
 
-	float GetMaxMP() { return MaxMP; }
+	float GetMaxMP() const { return MaxMP; }
 	void SetMaxMP(float _MaxMP) { this->MaxMP = _MaxMP; }
 
-	float GetAttack() { return Attack; }
+	float GetAttack() const { return Attack; }
 	void SetAttack(float _Attack) { this->Attack = _Attack; }
 
-	float GetCurrentExp() { return CurrentExp; }
+	float GetCurrentExp() const { return CurrentExp; }
 	void SetCurrentExp(float _CurrentExp) { this->CurrentExp = _CurrentExp; }
 
-	float GetRequiredExp() { return RequiredExp; }
+	float GetRequiredExp() const { return RequiredExp; }
 	void SetRequiredExp(float _RequiredExp) { this->RequiredExp = _RequiredExp; }
 
-	float GetHPRatio() { return GetCurrentHP() / GetMaxHP(); }
+	FP3CharacterData* GetLevelBasedCurrentStat() const { return LevelBasedCurrentStat; }
+	void SetLevelBasedCurrentStat(FP3CharacterData* _LevelBasedCurrentStat) { this->LevelBasedCurrentStat = _LevelBasedCurrentStat; }
+
+	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }
+
+	float TakeDamage(float _Damage);
 
 	FOnHPChangedDelegate OnHPChanged;
 
