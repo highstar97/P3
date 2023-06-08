@@ -1,21 +1,12 @@
 #include "P3HeroAnimInstance.h"
+#include "P3Character.h"
+#include "P3StateComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UP3HeroAnimInstance::UP3HeroAnimInstance()
 {
-	IsAttacking = false;
-	IsInAir = false;
-	IsAccelerating = false;
-	AttackCount = 0;
-	Speed = 0.0f;
-	Pitch = 0.0f;
-	Yaw = 0.0f;
-	Roll = 0.0f;
-	YawDelta = 0.0f;
-	RotationLastTick = FRotator::ZeroRotator;
-
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE_A(TEXT("/Game/ParagonKwang/Characters/Heroes/Kwang/Animations/PrimaryAttack_A_Slow_Montage.PrimaryAttack_A_Slow_Montage"));
 	if (ATTACK_MONTAGE_A.Succeeded())
 	{
@@ -41,30 +32,22 @@ UP3HeroAnimInstance::UP3HeroAnimInstance()
 	}
 }
 
-void UP3HeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+void UP3HeroAnimInstance::NativeInitializeAnimation()
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
-
 	APawn* Pawn = TryGetPawnOwner();
-	if (::IsValid(Pawn))
+	P3Character = Cast<AP3Character>(Pawn);
+	
+	if (P3Character == nullptr)
 	{
-		IsInAir = Pawn->GetMovementComponent()->IsFalling();
-		IsAccelerating = Cast<ACharacter>(Pawn)->GetCharacterMovement()->GetCurrentAcceleration().Length() > 0.0f ? true : false;
-		Speed = Pawn->GetVelocity().Length();
-		FRotator DeltaRotator = (Pawn->GetBaseAimRotation() - Pawn->GetActorRotation());
-		Pitch = DeltaRotator.Pitch;
-		Yaw = DeltaRotator.Yaw;
-		Roll = DeltaRotator.Roll;
-		RotationLastTick = Pawn->GetActorRotation();
-		YawDelta = FMath::FInterpTo(YawDelta, (((RotationLastTick - Pawn->GetActorRotation()).Yaw / DeltaSeconds) / 7.0f), DeltaSeconds, 6.0f);
+		UE_LOG(LogTemp, Warning, TEXT("[P3HeroAnimInstance] P3Character is nullptr."));
 	}
 }
 
 void UP3HeroAnimInstance::PlayAttackMontage()
 {
-	if (IsAttacking) return;
+	if (P3Character->GetStateComponent()->GetIsAttacking() == true) return;
 
-	switch (AttackCount)
+	switch (P3Character->GetStateComponent()->GetAttackCount())
 	{
 	case 0:
 	{
@@ -96,23 +79,28 @@ void UP3HeroAnimInstance::PlayAttackMontage()
 
 void UP3HeroAnimInstance::AnimNotify_StartAttack()
 {
-	IsAttacking = true;
+	P3Character->GetStateComponent()->SetIsAttacking(true);
 }
 
 void UP3HeroAnimInstance::AnimNotify_SaveAttack()
 {
-	if (++AttackCount > 4)
+	int PreAttackCount = P3Character->GetStateComponent()->GetAttackCount();
+	if (PreAttackCount+1 == NumOfAttackMontage)
 	{
-		AttackCount = 0;
+		P3Character->GetStateComponent()->SetAttackCount(0);
+	}
+	else
+	{
+		P3Character->GetStateComponent()->SetAttackCount(PreAttackCount + 1);
 	}
 }
 
 void UP3HeroAnimInstance::AnimNotify_EndAttack()
 {
-	IsAttacking = false;
+	P3Character->GetStateComponent()->SetIsAttacking(false);
 }
 
 void UP3HeroAnimInstance::AnimNotify_ResetCombo()
 {
-	AttackCount = 0;
+	P3Character->GetStateComponent()->SetAttackCount(0);
 }

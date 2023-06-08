@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UWidgetComponent;
 class UP3StatComponent;
+class UP3StateComponent;
 class UInputMappingContext;
 class UInputAction;
 class UP3StatComponent;
@@ -31,25 +32,32 @@ class AP3Character : public ACharacter
 public:
 	AP3Character();
 	
+	UP3StateComponent* GetStateComponent() const { return StateComponent; }
+
 protected:
 	virtual void BeginPlay();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+	virtual void Jump() override;
+	virtual void StopJumping() override;
 	virtual void Attack();
 	virtual void InitStat();
 
 	ECharacterType GetCharacterType() const { return CharacterType; }
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 
-	UFUNCTION(BlueprintCallable)
-	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
-
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 		UP3StatComponent* StatComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+		UP3StateComponent* StateComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		UWidgetComponent* HPBarWidgetComponent;

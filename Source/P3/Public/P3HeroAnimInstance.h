@@ -4,6 +4,8 @@
 #include "Animation/AnimInstance.h"
 #include "P3HeroAnimInstance.generated.h"
 
+class AP3Character;
+
 UCLASS()
 class P3_API UP3HeroAnimInstance : public UAnimInstance
 {
@@ -12,7 +14,7 @@ class P3_API UP3HeroAnimInstance : public UAnimInstance
 public:
 	UP3HeroAnimInstance();
 
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativeInitializeAnimation() override;
 
 	void PlayAttackMontage();
 
@@ -30,35 +32,10 @@ private:
 		void AnimNotify_ResetCombo();
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsAttacking;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, Meta = (AllowPrivateAccess = "true"))
+		AP3Character* P3Character;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsInAir;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsAccelerating;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		int32 AttackCount;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		float Pitch;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		float Yaw;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		float Roll;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		float YawDelta;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		FRotator RotationLastTick;
+	const int32 NumOfAttackMontage = 4;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 		UAnimMontage* AttackMontage1;

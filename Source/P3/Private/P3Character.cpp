@@ -1,6 +1,7 @@
 #include "P3Character.h"
 #include "P3HeroController.h"
 #include "P3StatComponent.h"
+#include "P3StateComponent.h"
 #include "P3GameInstance.h"
 #include "P3HPBarWidget.h"
 #include "Components/CapsuleComponent.h"
@@ -30,8 +31,6 @@ AP3Character::AP3Character()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-
-
 	HPBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HPBarWidgetComponent->SetupAttachment(RootComponent);
 	HPBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
@@ -44,6 +43,7 @@ AP3Character::AP3Character()
 	}
 
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
+	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
 
 	SetCharacterType(ECharacterType::None);
 }
@@ -75,8 +75,8 @@ void AP3Character::BeginPlay()
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AP3Character::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AP3Character::StopJumping);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AP3Character::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AP3Character::Look);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AP3Character::Attack);
@@ -88,9 +88,21 @@ void AP3Character::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
+void AP3Character::Jump()
+{
+	StateComponent->SetIsInAir(true);
+	Super::Jump();
+}
+
+void AP3Character::StopJumping()
+{
+	StateComponent->SetIsInAir(false);
+	Super::StopJumping();
+}
+
 void AP3Character::Attack()
 {
-
+	
 }
 
 void AP3Character::InitStat()
@@ -135,6 +147,12 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 
 void AP3Character::Move(const FInputActionValue& Value)
 {
+	// when Character IsAttacking, Can't Move.
+	if (StateComponent->GetIsAttacking())
+	{
+		return;
+	}
+
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -146,7 +164,7 @@ void AP3Character::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
