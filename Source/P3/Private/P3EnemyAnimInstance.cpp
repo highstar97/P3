@@ -1,9 +1,10 @@
-#include "P3HeroAnimInstance.h"
+#include "P3EnemyAnimInstance.h"
 #include "P3Character.h"
 #include "P3StateComponent.h"
 
-UP3HeroAnimInstance::UP3HeroAnimInstance()
+UP3EnemyAnimInstance::UP3EnemyAnimInstance()
 {
+	/*
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE_A(TEXT("/Game/ParagonKwang/Characters/Heroes/Kwang/Animations/PrimaryAttack_A_Slow_Montage.PrimaryAttack_A_Slow_Montage"));
 	if (ATTACK_MONTAGE_A.Succeeded())
 	{
@@ -27,14 +28,15 @@ UP3HeroAnimInstance::UP3HeroAnimInstance()
 	{
 		AttackMontage4 = ATTACK_MONTAGE_D.Object;
 	}
+	*/
 }
 
-void UP3HeroAnimInstance::NativeInitializeAnimation()
+void UP3EnemyAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 }
 
-void UP3HeroAnimInstance::PlayAttackMontage()
+void UP3EnemyAnimInstance::PlayAttackMontage()
 {
 	if (P3Character->GetStateComponent()->GetIsAttacking() == true) return;
 
@@ -62,7 +64,7 @@ void UP3HeroAnimInstance::PlayAttackMontage()
 	}
 	default:
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3HeroAnimInstance] PlayAttackMontage's parameter Error."));
+		UE_LOG(LogTemp, Warning, TEXT("[P3EnemyAnimInstance] PlayAttackMontage's parameter Error."));
 		break;
 	}
 	}
