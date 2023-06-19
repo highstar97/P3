@@ -51,6 +51,7 @@ AP3Character::AP3Character()
 void AP3Character::BeginPlay()
 {
 	Super::BeginPlay();
+	// Need to fix. Why P3HeroController? in P3Character.
 	if (AP3HeroController* HeroController = Cast<AP3HeroController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(HeroController->GetLocalPlayer()))
