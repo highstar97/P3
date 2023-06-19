@@ -86,6 +86,8 @@ void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 void AP3Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	StatComponent->OnHPIsZero.AddUObject(this, &AP3Character::Die);
 }
 
 void AP3Character::Jump()
@@ -103,6 +105,12 @@ void AP3Character::StopJumping()
 void AP3Character::Attack()
 {
 	
+}
+
+void AP3Character::Die()
+{
+	StateComponent->SetIsDead(true);
+	SetActorEnableCollision(false);
 }
 
 void AP3Character::InitStat()

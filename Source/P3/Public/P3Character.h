@@ -41,6 +41,7 @@ protected:
 	virtual void Jump() override;
 	virtual void StopJumping() override;
 	virtual void Attack();
+	virtual void Die();
 	virtual void InitStat();
 
 	ECharacterType GetCharacterType() const { return CharacterType; }

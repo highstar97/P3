@@ -34,6 +34,11 @@ void AP3Hero::Attack()
 	HeroAnim->PlayAttackMontage();
 }
 
+void AP3Hero::Die()
+{
+	Super::Die();
+}
+
 void AP3Hero::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

@@ -15,6 +15,7 @@ public:
 	AP3Hero();
 
 	virtual void Attack() override;
+	virtual void Die() override;
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }

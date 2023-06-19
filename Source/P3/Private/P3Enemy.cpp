@@ -15,6 +15,11 @@ void AP3Enemy::Attack()
 	Super::Attack();
 }
 
+void AP3Enemy::Die()
+{
+	Super::Die();
+}
+
 void AP3Enemy::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

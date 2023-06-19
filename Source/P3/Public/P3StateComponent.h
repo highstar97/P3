@@ -10,12 +10,15 @@ class P3_API UP3StateComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UP3StateComponent() : IsAttacking(false), IsInAir(false), IsAccelerating(false), AttackCount(0), Speed(0.0f), Pitch(0.0f), Yaw(0.0f), Roll(0.0f), YawDelta(0.0f), RotationLastTick(FRotator::ZeroRotator)
+	UP3StateComponent() : IsDead(false), IsAttacking(false), IsInAir(false), IsAccelerating(false), AttackCount(0), Speed(0.0f), Pitch(0.0f), Yaw(0.0f), Roll(0.0f), YawDelta(0.0f), RotationLastTick(FRotator::ZeroRotator)
 	{
 		PrimaryComponentTick.bCanEverTick = true;
 	}
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool GetIsDead() const { return IsDead; }
+	void SetIsDead(bool _IsDead) { this->IsDead = _IsDead; }
 
 	bool GetIsAttacking() const { return IsAttacking; }
 	void SetIsAttacking(bool _IsAttacking) { this->IsAttacking = _IsAttacking; }
@@ -51,6 +54,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+		bool IsDead;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 		bool IsAttacking;
 

@@ -7,6 +7,7 @@
 struct FP3CharacterData;
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3StatComponent : public UActorComponent
@@ -54,6 +55,7 @@ public:
 	float TakeDamage(float _Damage);
 
 	FOnHPChangedDelegate OnHPChanged;
+	FOnHPIsZeroDelegate OnHPIsZero;
 
 protected:
 	virtual void BeginPlay() override;

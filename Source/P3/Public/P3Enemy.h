@@ -13,6 +13,7 @@ public:
 	AP3Enemy();
 
 	virtual void Attack() override;
+	virtual void Die() override;
 
 protected:
 	virtual void PostInitializeComponents() override;

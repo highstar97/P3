@@ -40,6 +40,7 @@ void UP3StatComponent::SetCurrentHP(float _CurrentHP)
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;
+		OnHPIsZero.Broadcast();
 	}
 }
 
