@@ -110,8 +110,13 @@ void AP3Character::Attack()
 
 void AP3Character::Die()
 {
+	FTimerHandle DeadTimerHandle = {};
 	StateComponent->SetIsDead(true);
 	SetActorEnableCollision(false);
+	HPBarWidgetComponent->SetHiddenInGame(true);
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+		Destroy();
+		}), 3.0f, false);
 }
 
 void AP3Character::InitStat()
