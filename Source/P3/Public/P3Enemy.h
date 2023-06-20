@@ -4,6 +4,8 @@
 #include "P3Character.h"
 #include "P3Enemy.generated.h"
 
+class UP3EnemyAnimInstance;
+
 UCLASS()
 class P3_API AP3Enemy : public AP3Character
 {
@@ -18,9 +20,7 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
-/*
 public:
 	UPROPERTY()
 		UP3EnemyAnimInstance* EnemyAnim;
-*/
 };
