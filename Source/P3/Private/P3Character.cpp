@@ -2,8 +2,10 @@
 #include "P3HeroController.h"
 #include "P3StatComponent.h"
 #include "P3StateComponent.h"
+#include "P3WeaponComponent.h"
 #include "P3GameInstance.h"
 #include "P3HPBarWidget.h"
+#include "P3Weapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
@@ -44,6 +46,7 @@ AP3Character::AP3Character()
 
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
 	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
+	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
 
 	SetCharacterType(ECharacterType::None);
 }
@@ -71,6 +74,12 @@ void AP3Character::BeginPlay()
 	}
 
 	InitStat();
+
+	AP3Weapon* CurrentWeapon = WeaponComponent->SpawnBasicSword();
+	if (CurrentWeapon != nullptr)
+	{
+		WeaponComponent->EquipWeapon(CurrentWeapon);
+	}
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -114,6 +123,7 @@ void AP3Character::Die()
 	StateComponent->SetIsDead(true);
 	SetActorEnableCollision(false);
 	HPBarWidgetComponent->SetHiddenInGame(true);
+	WeaponComponent->DestroyWeapon();
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 		Destroy();
 		}), 3.0f, false);
@@ -131,32 +141,6 @@ void AP3Character::InitStat()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
 	}
-}
-
-float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
-{
-	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentStat() == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat. "));
-		return 0.0f;
-	}
-
-	float InitialDamage = EventInstigatorActor->StatComponent->GetAttack();
-
-	// Team Judgment
-	if (this->GetCharacterType() == ECharacterType::None || EventInstigatorActor->GetCharacterType() == ECharacterType::None)
-	{
-		return 0.0f;
-	}
-
-	if (this->GetCharacterType() == EventInstigatorActor->GetCharacterType())
-	{
-		return 0.0f;
-	}
-
-	float FinalDamage = this->StatComponent->TakeDamage(InitialDamage);
-
-	return FinalDamage;
 }
 
 void AP3Character::Move(const FInputActionValue& Value)
@@ -199,4 +183,30 @@ void AP3Character::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
+{
+	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentStat() == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat. "));
+		return 0.0f;
+	}
+
+	float InitialDamage = EventInstigatorActor->StatComponent->GetAttack();
+
+	// Team Judgment
+	if (this->GetCharacterType() == ECharacterType::None || EventInstigatorActor->GetCharacterType() == ECharacterType::None)
+	{
+		return 0.0f;
+	}
+
+	if (this->GetCharacterType() == EventInstigatorActor->GetCharacterType())
+	{
+		return 0.0f;
+	}
+
+	float FinalDamage = this->StatComponent->TakeDamage(InitialDamage);
+
+	return FinalDamage;
 }

@@ -12,6 +12,7 @@ class UCameraComponent;
 class UWidgetComponent;
 class UP3StatComponent;
 class UP3StateComponent;
+class UP3WeaponComponent;
 class UInputMappingContext;
 class UInputAction;
 class UP3StatComponent;
@@ -33,6 +34,8 @@ public:
 	AP3Character();
 	
 	UP3StateComponent* GetStateComponent() const { return StateComponent; }
+	UFUNCTION(BlueprintCallable)
+		UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
 protected:
 	virtual void BeginPlay();
@@ -42,11 +45,11 @@ protected:
 	virtual void StopJumping() override;
 	virtual void Attack();
 	virtual void Die();
-	virtual void InitStat();
 
 	ECharacterType GetCharacterType() const { return CharacterType; }
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
-
+	
+	void InitStat();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
@@ -59,6 +62,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 		UP3StateComponent* StateComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+		UP3WeaponComponent* WeaponComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		UWidgetComponent* HPBarWidgetComponent;
