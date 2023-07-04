@@ -11,11 +11,14 @@ class P3_API UP3WeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UP3WeaponComponent();
 
 	void EquipWeapon(AP3Weapon* _Weapon);
 	void DestroyWeapon();
+
+	UFUNCTION(BlueprintCallable)
+		float GetWeaponRadius() const;
 
 	AP3Weapon* SpawnBasicSword();
 

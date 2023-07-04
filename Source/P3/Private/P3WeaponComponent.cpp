@@ -32,6 +32,15 @@ void UP3WeaponComponent::DestroyWeapon()
 	Weapon->Destroy();
 }
 
+float UP3WeaponComponent::GetWeaponRadius() const
+{
+	if (Weapon != nullptr)
+	{
+		return Weapon->GetRaidus();
+	}
+	return 0.0f;
+}
+
 void UP3WeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
