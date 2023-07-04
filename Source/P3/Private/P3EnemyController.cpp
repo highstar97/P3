@@ -15,13 +15,13 @@ AP3EnemyController::AP3EnemyController()
 
 	AIPerceptionComponent->ConfigureSense(*AISenseConfigSight);
 
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> BB_ENEMY(TEXT("/Game/AI/BB_Enemy.BB_Enemy"));
+	static ConstructorHelpers::FObjectFinder<UBlackboardData> BB_ENEMY(TEXT("/Script/AIModule.BlackboardData'/Game/AI/BB_Enemy.BB_Enemy'"));
 	if (BB_ENEMY.Succeeded())
 	{
 		BBAsset = BB_ENEMY.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BT_ENEMY(TEXT("/Game/AI/BT_Enemy.BT_Enemy"));
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BT_ENEMY(TEXT("/Script/AIModule.BehaviorTree'/Game/AI/BT_Enemy.BT_Enemy'"));
 	if (BT_ENEMY.Succeeded())
 	{
 		BTAsset = BT_ENEMY.Object;
