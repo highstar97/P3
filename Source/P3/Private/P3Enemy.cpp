@@ -1,5 +1,6 @@
 #include "P3Enemy.h"
 #include "P3EnemyAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 
 AP3Enemy::AP3Enemy()
@@ -7,6 +8,8 @@ AP3Enemy::AP3Enemy()
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
+
+	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> ENEMY_ANIM(TEXT("/Game/Blueprints/EnemyAnimBP.EnemyAnimBP_C"));
 	if (ENEMY_ANIM.Succeeded())
