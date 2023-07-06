@@ -37,6 +37,9 @@ public:
 	UP3StateComponent* GetStateComponent() const { return StateComponent; }
 	UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
+	ECharacterType GetCharacterType() const { return CharacterType; }
+	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -46,11 +49,10 @@ protected:
 	
 	virtual void InitStat();
 	virtual void Attack();
-	virtual void Die();
+	virtual void Die();	
 
-	ECharacterType GetCharacterType() const { return CharacterType; }
-	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
-	
+	void LevelUp();
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
@@ -58,7 +60,7 @@ protected:
 		void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
 	
 	UFUNCTION(BlueprintCallable)
-	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
+		float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))

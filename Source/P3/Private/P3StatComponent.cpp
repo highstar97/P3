@@ -1,16 +1,6 @@
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
 
-void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
-{
-	if (LevelBasedCurrentData == nullptr)
-	{
-		SetLevelBasedCurrentData(LevelBasedData);
-	}
-
-	SetLevel(NewLevel);
-}
-
 void UP3StatComponent::SetLevel(int32 NewLevel)
 {
 	if (LevelBasedCurrentData == nullptr)
@@ -28,10 +18,31 @@ void UP3StatComponent::SetLevel(int32 NewLevel)
 	SetAttack(LevelBasedCurrentData->Attack);
 	SetRequiredExp(LevelBasedCurrentData->RequiredExp);
 	SetCurrentExp(0);
-	
+
 	OnHPChanged.Broadcast();
 	OnMPChanged.Broadcast();
 	OnExpChanged.Broadcast();
+}
+
+void UP3StatComponent::AddExp(float GainedExp)
+{
+	CurrentExp += GainedExp;
+	if (CurrentExp >= RequiredExp)
+	{
+		CurrentExp -= RequiredExp;
+		OnLevelUp.Broadcast();
+	}
+	OnExpChanged.Broadcast();
+}
+
+void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
+{
+	if (LevelBasedCurrentData == nullptr)
+	{
+		SetLevelBasedCurrentData(LevelBasedData);
+	}
+
+	SetLevel(NewLevel);
 }
 
 void UP3StatComponent::SetCurrentHP(float NewCurrentHP)

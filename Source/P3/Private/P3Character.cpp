@@ -100,6 +100,7 @@ void AP3Character::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	StatComponent->OnHPIsZero.AddUObject(this, &AP3Character::Die);
+	StatComponent->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
 }
 
 void AP3Character::Jump()
@@ -134,6 +135,21 @@ void AP3Character::Die()
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 		Destroy();
 		}), 3.0f, false);
+}
+
+void AP3Character::LevelUp()
+{
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (P3GameInstance != nullptr)
+	{
+		int32 NextLevel = this->GetStatComponent()->GetLevel() + 1;
+		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3HeroData(NextLevel);
+		GetStatComponent()->SetStatFromDataTable(NextLevel, LevelBasedData);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
+	}
 }
 
 void AP3Character::Move(const FInputActionValue& Value)
@@ -206,5 +222,23 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 
 	float FinalDamage = this->StatComponent->TakeDamage(InitialDamage);
 
+	// Exp Logic
+	if (this->StateComponent->GetbIsDead())
+	{
+		// when Multiplay, Each PlayerController's bIsPlayerController is all true?
+		if (EventInstigator->IsPlayerController())
+		{
+			if (this->GetCharacterType() == ECharacterType::Enemy)
+			{
+				UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+				if (P3GameInstance != nullptr)
+				{
+					float DroppedExp = P3GameInstance->GetP3EnemyData(this->GetStatComponent()->GetLevel())->DropExp;
+					EventInstigatorActor->GetStatComponent()->AddExp(DroppedExp);
+				}
+			}
+		}
+	}
+	
 	return FinalDamage;
 }
