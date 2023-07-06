@@ -8,6 +8,8 @@ struct FP3CharacterData;
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnMPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnExpChangedDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3StatComponent : public UActorComponent
@@ -51,11 +53,15 @@ public:
 	void SetLevelBasedCurrentStat(FP3CharacterData* _LevelBasedCurrentStat) { this->LevelBasedCurrentStat = _LevelBasedCurrentStat; }
 
 	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }
+	float GetMPRatio() const { return GetCurrentMP() / GetMaxMP(); }
+	float GetExpRatio() const { return GetCurrentExp() / GetRequiredExp(); }
 
 	float TakeDamage(float _Damage);
 
 	FOnHPChangedDelegate OnHPChanged;
 	FOnHPIsZeroDelegate OnHPIsZero;
+	FOnMPChangedDelegate OnMPChanged;
+	FOnExpChangedDelegate OnExpChanged;
 
 protected:
 	virtual void BeginPlay() override;

@@ -4,6 +4,7 @@
 #include "P3StateComponent.h"
 #include "P3WeaponComponent.h"
 #include "P3GameInstance.h"
+#include "P3HUDWidget.h"
 #include "P3HPBarWidget.h"
 #include "P3Weapon.h"
 #include "Components/CapsuleComponent.h"
@@ -54,13 +55,20 @@ AP3Character::AP3Character()
 void AP3Character::BeginPlay()
 {
 	Super::BeginPlay();
-	// Need to fix. Why P3HeroController? in P3Character.
 	if (AP3HeroController* HeroController = Cast<AP3HeroController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(HeroController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		HeroController->GetHUDWidget()->BindCharacterStat(StatComponent);
+	}
+	
+	AP3Weapon* CurrentWeapon = WeaponComponent->SpawnBasicSword();
+	if (CurrentWeapon != nullptr)
+	{
+		WeaponComponent->EquipWeapon(CurrentWeapon);
 	}
 
 	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
@@ -72,14 +80,8 @@ void AP3Character::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Character] HPBarWidget is NULL."));
 	}
-
+	
 	InitStat();
-
-	AP3Weapon* CurrentWeapon = WeaponComponent->SpawnBasicSword();
-	if (CurrentWeapon != nullptr)
-	{
-		WeaponComponent->EquipWeapon(CurrentWeapon);
-	}
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

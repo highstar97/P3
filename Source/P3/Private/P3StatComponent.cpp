@@ -29,6 +29,8 @@ void UP3StatComponent::SetLevel(int32 _Level)
 	SetCurrentExp(0);
 	
 	OnHPChanged.Broadcast();
+	OnMPChanged.Broadcast();
+	OnExpChanged.Broadcast();
 }
 
 void UP3StatComponent::SetCurrentHP(float _CurrentHP)
