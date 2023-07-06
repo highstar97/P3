@@ -104,14 +104,19 @@ void AP3Character::PostInitializeComponents()
 
 void AP3Character::Jump()
 {
-	StateComponent->SetIsInAir(true);
+	StateComponent->SetbIsInAir(true);
 	Super::Jump();
 }
 
 void AP3Character::StopJumping()
 {
-	StateComponent->SetIsInAir(false);
+	StateComponent->SetbIsInAir(false);
 	Super::StopJumping();
+}
+
+void AP3Character::InitStat()
+{
+	
 }
 
 void AP3Character::Attack()
@@ -122,7 +127,7 @@ void AP3Character::Attack()
 void AP3Character::Die()
 {
 	FTimerHandle DeadTimerHandle = {};
-	StateComponent->SetIsDead(true);
+	StateComponent->SetbIsDead(true);
 	SetActorEnableCollision(false);
 	HPBarWidgetComponent->SetHiddenInGame(true);
 	WeaponComponent->DestroyWeapon();
@@ -131,24 +136,10 @@ void AP3Character::Die()
 		}), 3.0f, false);
 }
 
-void AP3Character::InitStat()
-{
-	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (nullptr != P3GameInstance)
-	{
-		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3CharacterData(1);
-		StatComponent->SetStatFromDataTable(1, LevelBasedData);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
-	}
-}
-
 void AP3Character::Move(const FInputActionValue& Value)
 {
 	// when Character IsAttacking, Can't Move.
-	if (StateComponent->GetIsAttacking())
+	if (StateComponent->GetbIsAttacking())
 	{
 		return;
 	}
@@ -194,9 +185,9 @@ void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 
 float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
 {
-	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentStat() == nullptr)
+	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentData() == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat. "));
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat."));
 		return 0.0f;
 	}
 

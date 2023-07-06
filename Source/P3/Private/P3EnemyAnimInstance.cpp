@@ -36,7 +36,7 @@ void UP3EnemyAnimInstance::NativeInitializeAnimation()
 
 void UP3EnemyAnimInstance::PlayAttackMontage()
 {
-	if (P3Character->GetStateComponent()->GetIsAttacking() == true) return;
+	if (P3Character->GetStateComponent()->GetbIsAttacking() == true) return;
 
 	switch (P3Character->GetStateComponent()->GetAttackCount())
 	{

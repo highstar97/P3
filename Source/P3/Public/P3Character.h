@@ -33,6 +33,7 @@ class AP3Character : public ACharacter
 public:
 	AP3Character();
 	
+	UP3StatComponent* GetStatComponent() const { return StatComponent; }
 	UP3StateComponent* GetStateComponent() const { return StateComponent; }
 	UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
@@ -42,14 +43,14 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void Jump() override;
 	virtual void StopJumping() override;
-
+	
+	virtual void InitStat();
 	virtual void Attack();
 	virtual void Die();
 
 	ECharacterType GetCharacterType() const { return CharacterType; }
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
 	
-	void InitStat();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 

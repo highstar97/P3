@@ -19,9 +19,9 @@ AP3Weapon* UP3WeaponComponent::SpawnBasicSword()
 	return SpawnedWeapon;
 }
 
-void UP3WeaponComponent::EquipWeapon(AP3Weapon* _Weapon)
+void UP3WeaponComponent::EquipWeapon(AP3Weapon* NewWeapon)
 {
-	Weapon = _Weapon;
+	Weapon = NewWeapon;
 	FName WeaponSocket(TEXT("WeaponSocket"));
 	AP3Character* Character = Cast<AP3Character>(GetOwner());
 	Weapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);

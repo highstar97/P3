@@ -1,8 +1,11 @@
 #include "P3Hero.h"
 #include "P3HeroAnimInstance.h"
+#include "P3GameInstance.h"
+#include "P3StatComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AP3Hero::AP3Hero()
 {
@@ -26,6 +29,21 @@ AP3Hero::AP3Hero()
 	}
 
 	SetCharacterType(ECharacterType::Hero);
+}
+
+void AP3Hero::InitStat()
+{
+	Super::InitStat();
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (P3GameInstance != nullptr)
+	{
+		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3HeroData(1);
+		GetStatComponent()->SetStatFromDataTable(1, LevelBasedData);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] GameInstance is NULL."))
+	}
 }
 
 void AP3Hero::Attack()

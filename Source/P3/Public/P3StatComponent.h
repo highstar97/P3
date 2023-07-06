@@ -17,46 +17,46 @@ class P3_API UP3StatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	UP3StatComponent() : Level(1), CurrentHP(0.0f), MaxHP(0.0f), CurrentMP(0.0f), MaxMP(0.0f), Attack(50.0f), CurrentExp(0.0f), RequiredExp(0.0f)
+	UP3StatComponent() : Level(1), CurrentHP(0.0f), MaxHP(0.0f), CurrentMP(0.0f), MaxMP(0.0f), Attack(0.0f), CurrentExp(0.0f), RequiredExp(0.0f)
 	{
-		LevelBasedCurrentStat = nullptr;
+		LevelBasedCurrentData = nullptr;
 		PrimaryComponentTick.bCanEverTick = false;
 	}
 
-	void SetStatFromDataTable(int32 _Level, FP3CharacterData* Data);
-
 	int32 GetLevel() const { return Level; }
-	void SetLevel(int32 _Level);
+	void SetLevel(int32 NewLevel);
 
 	float GetCurrentHP() const { return CurrentHP; }
-	void SetCurrentHP(float _CurrentHP);
+	void SetCurrentHP(float NewCurrentHP);
 
 	float GetMaxHP() const { return MaxHP; }
-	void SetMaxHP(float _MaxHP) { this->MaxHP = _MaxHP; }
+	void SetMaxHP(float NewMaxHP) { this->MaxHP = NewMaxHP; }
 
 	float GetCurrentMP() const { return CurrentMP; }
-	void SetCurrentMP(float _CurrentMP) { this->CurrentMP = _CurrentMP; }
+	void SetCurrentMP(float NewCurrentMP) { this->CurrentMP = NewCurrentMP; }
 
 	float GetMaxMP() const { return MaxMP; }
-	void SetMaxMP(float _MaxMP) { this->MaxMP = _MaxMP; }
+	void SetMaxMP(float NewMaxMP) { this->MaxMP = NewMaxMP; }
 
 	float GetAttack() const { return Attack; }
-	void SetAttack(float _Attack) { this->Attack = _Attack; }
+	void SetAttack(float NewAttack) { this->Attack = NewAttack; }
 
 	float GetCurrentExp() const { return CurrentExp; }
-	void SetCurrentExp(float _CurrentExp) { this->CurrentExp = _CurrentExp; }
+	void SetCurrentExp(float NewCurrentExp) { this->CurrentExp = NewCurrentExp; }
 
 	float GetRequiredExp() const { return RequiredExp; }
-	void SetRequiredExp(float _RequiredExp) { this->RequiredExp = _RequiredExp; }
+	void SetRequiredExp(float NewRequiredExp) { this->RequiredExp = NewRequiredExp; }
 
-	FP3CharacterData* GetLevelBasedCurrentStat() const { return LevelBasedCurrentStat; }
-	void SetLevelBasedCurrentStat(FP3CharacterData* _LevelBasedCurrentStat) { this->LevelBasedCurrentStat = _LevelBasedCurrentStat; }
+	FP3CharacterData* GetLevelBasedCurrentData() const { return LevelBasedCurrentData; }
+	void SetLevelBasedCurrentData(FP3CharacterData* NewLevelBasedData) { this->LevelBasedCurrentData = NewLevelBasedData; }
+
+	void SetStatFromDataTable(int32 NewLevel, FP3CharacterData* _LevelBasedData);
 
 	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }
 	float GetMPRatio() const { return GetCurrentMP() / GetMaxMP(); }
 	float GetExpRatio() const { return GetCurrentExp() / GetRequiredExp(); }
 
-	float TakeDamage(float _Damage);
+	float TakeDamage(float TakenDamage);
 
 	FOnHPChangedDelegate OnHPChanged;
 	FOnHPIsZeroDelegate OnHPIsZero;
@@ -91,5 +91,5 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 		float RequiredExp;
 
-	FP3CharacterData* LevelBasedCurrentStat;
+	FP3CharacterData* LevelBasedCurrentData;
 };

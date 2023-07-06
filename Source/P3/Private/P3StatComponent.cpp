@@ -1,31 +1,32 @@
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
 
-void UP3StatComponent::SetStatFromDataTable(int32 _Level, FP3CharacterData* LevelBasedData)
+void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
 {
-	if (LevelBasedCurrentStat == nullptr)
+	if (LevelBasedCurrentData == nullptr)
 	{
-		SetLevelBasedCurrentStat(LevelBasedData);
+		SetLevelBasedCurrentData(LevelBasedData);
 	}
 
-	SetLevel(_Level);
+	SetLevel(NewLevel);
 }
 
-void UP3StatComponent::SetLevel(int32 _Level)
+void UP3StatComponent::SetLevel(int32 NewLevel)
 {
-	if (LevelBasedCurrentStat == nullptr)
+	if (LevelBasedCurrentData == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3StatComponent] LevelBasedCurrentStat is NULL."));
+		UE_LOG(LogTemp, Warning, TEXT("[P3StatComponent] LevelBasedCurrentData is NULL."));
 		return;
 	}
 
 	// When the level is updated, HP and MP are filled to Max.
-	this->Level = _Level;
-	SetMaxHP(LevelBasedCurrentStat->MaxHP);
+	this->Level = NewLevel;
+	SetMaxHP(LevelBasedCurrentData->MaxHP);
 	SetCurrentHP(this->MaxHP);
-	SetMaxMP(LevelBasedCurrentStat->MaxMP);
+	SetMaxMP(LevelBasedCurrentData->MaxMP);
 	SetCurrentMP(this->MaxMP);
-	SetRequiredExp(LevelBasedCurrentStat->RequiredExp);
+	SetAttack(LevelBasedCurrentData->Attack);
+	SetRequiredExp(LevelBasedCurrentData->RequiredExp);
 	SetCurrentExp(0);
 	
 	OnHPChanged.Broadcast();
@@ -33,9 +34,9 @@ void UP3StatComponent::SetLevel(int32 _Level)
 	OnExpChanged.Broadcast();
 }
 
-void UP3StatComponent::SetCurrentHP(float _CurrentHP)
+void UP3StatComponent::SetCurrentHP(float NewCurrentHP)
 {
-	this->CurrentHP = _CurrentHP;
+	this->CurrentHP = NewCurrentHP;
 
 	OnHPChanged.Broadcast();
 
@@ -46,10 +47,10 @@ void UP3StatComponent::SetCurrentHP(float _CurrentHP)
 	}
 }
 
-float UP3StatComponent::TakeDamage(float _Damage)
+float UP3StatComponent::TakeDamage(float TakenDamage)
 {
-	// Damage logic : Damage = Attack
-	float Damage = _Damage;
+	// Damage logic : Damage = Attack (when defense stat update? will changed?)
+	float Damage = TakenDamage;
 	
 	SetCurrentHP(FMath::Clamp(GetCurrentHP() - Damage,0.0f,GetMaxHP()));
 

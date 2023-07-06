@@ -36,7 +36,7 @@ void UP3HeroAnimInstance::NativeInitializeAnimation()
 
 void UP3HeroAnimInstance::PlayAttackMontage()
 {
-	if (P3Character->GetStateComponent()->GetIsAttacking() == true) return;
+	if (P3Character->GetStateComponent()->GetbIsAttacking() == true) return;
 
 	switch (P3Character->GetStateComponent()->GetAttackCount())
 	{

@@ -14,6 +14,7 @@ class P3_API AP3Enemy : public AP3Character
 public:
 	AP3Enemy();
 
+	virtual void InitStat() override;
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack() override;
 	virtual void Die() override;

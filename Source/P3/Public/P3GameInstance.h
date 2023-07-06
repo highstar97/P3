@@ -7,13 +7,14 @@
 
 class UDataTable;
 
+// FP3CharacterData is used for Hero, but since it serves as the parent of Enemy, Character name is used instead of Hero to clarify the inheritance structure.
 USTRUCT(BlueprintType)
 struct FP3CharacterData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	FP3CharacterData() : Level(1), MaxHP(1000), MaxMP(700), Attack(50), RequiredExp(100) {}
+	FP3CharacterData() : Level(1), MaxHP(3000.0f), MaxMP(2000.0f), Attack(150.0f), RequiredExp(100) {}
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
@@ -32,6 +33,19 @@ public:
 		float RequiredExp;
 };
 
+USTRUCT(BlueprintType)
+struct FP3EnemyData : public FP3CharacterData
+{
+	GENERATED_BODY()
+
+public:
+	FP3EnemyData() : DropExp(20.0f) {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		float DropExp;
+};
+
 UCLASS()
 class P3_API UP3GameInstance : public UGameInstance
 {
@@ -42,9 +56,13 @@ public:
 
 	virtual void Init() override;
 
-	FP3CharacterData* GetP3CharacterData(int32 Level);
+	FP3CharacterData* GetP3HeroData(int32 FromLevel);
+	FP3EnemyData* GetP3EnemyData(int32 FromLevel);
 
 private:
 	UPROPERTY()
-		UDataTable* P3CharacterDataTable;
+		UDataTable* P3HeroDataTable;
+
+	UPROPERTY()
+		UDataTable* P3EnemyDataTable;
 };

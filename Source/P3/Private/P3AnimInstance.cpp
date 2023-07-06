@@ -25,7 +25,7 @@ void UP3AnimInstance::PlayAttackMontage()
 
 void UP3AnimInstance::AnimNotify_StartAttack()
 {
-	P3Character->GetStateComponent()->SetIsAttacking(true);
+	P3Character->GetStateComponent()->SetbIsAttacking(true);
 }
 
 void UP3AnimInstance::AnimNotify_SaveAttack()
@@ -43,7 +43,7 @@ void UP3AnimInstance::AnimNotify_SaveAttack()
 
 void UP3AnimInstance::AnimNotify_EndAttack()
 {
-	P3Character->GetStateComponent()->SetIsAttacking(false);
+	P3Character->GetStateComponent()->SetbIsAttacking(false);
 }
 
 void UP3AnimInstance::AnimNotify_ResetCombo()

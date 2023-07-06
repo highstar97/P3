@@ -1,7 +1,10 @@
 #include "P3Enemy.h"
 #include "P3EnemyAnimInstance.h"
+#include "P3GameInstance.h"
+#include "P3StatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AP3Enemy::AP3Enemy()
 {
@@ -18,6 +21,21 @@ AP3Enemy::AP3Enemy()
 	}
 
 	SetCharacterType(ECharacterType::Enemy);
+}
+
+void AP3Enemy::InitStat()
+{
+	Super::InitStat();
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (P3GameInstance != nullptr)
+	{
+		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3EnemyData(1);
+		GetStatComponent()->SetStatFromDataTable(1, LevelBasedData);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Enemy] GameInstance is NULL."))
+	}
 }
 
 void AP3Enemy::Attack()

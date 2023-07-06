@@ -9,8 +9,8 @@ void UP3StateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	if (::IsValid(Pawn))
 	{
-		IsInAir = Pawn->GetMovementComponent()->IsFalling();
-		IsAccelerating = Cast<ACharacter>(Pawn)->GetCharacterMovement()->GetCurrentAcceleration().Length() > 0.0f ? true : false;
+		bIsInAir = Pawn->GetMovementComponent()->IsFalling();
+		bIsAccelerating = Cast<ACharacter>(Pawn)->GetCharacterMovement()->GetCurrentAcceleration().Length() > 0.0f ? true : false;
 		Speed = Pawn->GetVelocity().Length();
 		FRotator DeltaRotator = (Pawn->GetBaseAimRotation() - Pawn->GetActorRotation());
 		Pitch = DeltaRotator.Pitch;

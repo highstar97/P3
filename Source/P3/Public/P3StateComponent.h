@@ -10,61 +10,61 @@ class P3_API UP3StateComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UP3StateComponent() : IsDead(false), IsAttacking(false), IsInAir(false), IsAccelerating(false), AttackCount(0), Speed(0.0f), Pitch(0.0f), Yaw(0.0f), Roll(0.0f), YawDelta(0.0f), RotationLastTick(FRotator::ZeroRotator)
+	UP3StateComponent() : bIsDead(false), bIsAttacking(false), bIsInAir(false), bIsAccelerating(false), AttackCount(0), Speed(0.0f), Pitch(0.0f), Yaw(0.0f), Roll(0.0f), YawDelta(0.0f), RotationLastTick(FRotator::ZeroRotator)
 	{
 		PrimaryComponentTick.bCanEverTick = true;
 	}
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	bool GetIsDead() const { return IsDead; }
-	void SetIsDead(bool _IsDead) { this->IsDead = _IsDead; }
+	bool GetbIsDead() const { return bIsDead; }
+	void SetbIsDead(bool NewbIsDead) { this->bIsDead = NewbIsDead; }
 
-	bool GetIsAttacking() const { return IsAttacking; }
-	void SetIsAttacking(bool _IsAttacking) { this->IsAttacking = _IsAttacking; }
+	bool GetbIsAttacking() const { return bIsAttacking; }
+	void SetbIsAttacking(bool NewbIsAttacking) { this->bIsAttacking = NewbIsAttacking; }
 
-	bool GetIsInAir() const { return IsInAir; }
-	void SetIsInAir(bool _IsInAir) { this->IsInAir = _IsInAir; }
+	bool GetbIsInAir() const { return bIsInAir; }
+	void SetbIsInAir(bool NewbIsInAir) { this->bIsInAir = NewbIsInAir; }
 
-	bool GetIsAccelerating() const { return IsAccelerating; }
-	void SetIsAccelerating(bool _IsAccelerating) { this->IsAccelerating = _IsAccelerating; }
+	bool GetbIsAccelerating() const { return bIsAccelerating; }
+	void SetbIsAccelerating(bool NewbIsAccelerating) { this->bIsAccelerating = NewbIsAccelerating; }
 
 	int32 GetAttackCount() const { return AttackCount; }
-	void SetAttackCount(int32 _AttackCount) { this->AttackCount = _AttackCount; }
+	void SetAttackCount(int32 NewAttackCount) { this->AttackCount = NewAttackCount; }
 
 	float GetSpeed() const { return Speed; }
-	void SetSpeed(float _Speed) { this->Speed = _Speed; }
+	void SetSpeed(float NewSpeed) { this->Speed = NewSpeed; }
 
 	float GetPitch() const { return Pitch; }
-	void SetPitch(float _Pitch) { this->Pitch = _Pitch; }
+	void SetPitch(float NewPitch) { this->Pitch = NewPitch; }
 
 	float GetYaw() const { return Yaw; }
-	void SetYaw(float _Yaw) { this->Yaw = _Yaw; }
+	void SetYaw(float NewYaw) { this->Yaw = NewYaw; }
 
 	float GetRoll() const { return Roll; }
-	void SetRoll(float _Roll) { this->Roll = _Roll; }
+	void SetRoll(float NewRoll) { this->Roll = NewRoll; }
 
 	float GetYawDelta() const { return YawDelta; }
-	void SetYawDelta(float _YawDelta) { this->YawDelta = _YawDelta; }
+	void SetYawDelta(float NewYawDelta) { this->YawDelta = NewYawDelta; }
 
 	FRotator GetRotationLastTick() const { return RotationLastTick; }
-	void SetRotationLastTick(FRotator _RotationLastTick) { this->RotationLastTick = _RotationLastTick; }
+	void SetRotationLastTick(FRotator NewRotationLastTick) { this->RotationLastTick = NewRotationLastTick; }
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsDead;
+		bool bIsDead;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsAttacking;
+		bool bIsAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsInAir;
+		bool bIsInAir;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-		bool IsAccelerating;
+		bool bIsAccelerating;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 		int32 AttackCount;

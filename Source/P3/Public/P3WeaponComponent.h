@@ -14,7 +14,7 @@ class P3_API UP3WeaponComponent : public UActorComponent
 public:
 	UP3WeaponComponent();
 
-	void EquipWeapon(AP3Weapon* _Weapon);
+	void EquipWeapon(AP3Weapon* NewWeapon);
 	void DestroyWeapon();
 
 	UFUNCTION(BlueprintCallable)
