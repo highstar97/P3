@@ -34,15 +34,15 @@ public:
 	AP3Character();
 	
 	UP3StateComponent* GetStateComponent() const { return StateComponent; }
-	UFUNCTION(BlueprintCallable)
-		UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
+	UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
 	virtual void Jump() override;
 	virtual void StopJumping() override;
+
 	virtual void Attack();
 	virtual void Die();
 
@@ -53,6 +53,9 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
+	UFUNCTION(BlueprintCallable)
+		void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
+	
 	UFUNCTION(BlueprintCallable)
 	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 

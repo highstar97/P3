@@ -185,6 +185,11 @@ void AP3Character::Look(const FInputActionValue& Value)
 	}
 }
 
+void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
+}
+
 float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
 {
 	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentStat() == nullptr)
