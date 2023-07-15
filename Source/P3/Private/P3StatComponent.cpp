@@ -1,29 +1,6 @@
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
 
-void UP3StatComponent::SetLevel(int32 NewLevel)
-{
-	if (LevelBasedCurrentData == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3StatComponent] LevelBasedCurrentData is NULL."));
-		return;
-	}
-
-	// When the level is updated, HP and MP are filled to Max.
-	this->Level = NewLevel;
-	SetMaxHP(LevelBasedCurrentData->MaxHP);
-	SetCurrentHP(this->MaxHP);
-	SetMaxMP(LevelBasedCurrentData->MaxMP);
-	SetCurrentMP(this->MaxMP);
-	SetAttack(LevelBasedCurrentData->Attack);
-	SetRequiredExp(LevelBasedCurrentData->RequiredExp);
-	SetCurrentExp(0);
-
-	OnHPChanged.Broadcast();
-	OnMPChanged.Broadcast();
-	OnExpChanged.Broadcast();
-}
-
 void UP3StatComponent::AddExp(float GainedExp)
 {
 	CurrentExp += GainedExp;
@@ -35,14 +12,32 @@ void UP3StatComponent::AddExp(float GainedExp)
 	OnExpChanged.Broadcast();
 }
 
-void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
+void UP3StatComponent::LevelUp()
 {
 	if (LevelBasedCurrentData == nullptr)
 	{
-		SetLevelBasedCurrentData(LevelBasedData);
+		UE_LOG(LogTemp, Warning, TEXT("[P3StatComponent] LevelBasedCurrentData is NULL."));
+		return;
 	}
 
+	// When the level is updated, HP and MP are filled to Max. CurrentExp is not affected by LevelUp().
+	SetMaxHP(LevelBasedCurrentData->MaxHP);
+	SetCurrentHP(this->MaxHP);
+	SetMaxMP(LevelBasedCurrentData->MaxMP);
+	SetCurrentMP(this->MaxMP);
+	SetAttack(LevelBasedCurrentData->Attack);
+	SetRequiredExp(LevelBasedCurrentData->RequiredExp);
+
+	OnHPChanged.Broadcast();
+	OnMPChanged.Broadcast();
+	OnExpChanged.Broadcast();
+}
+
+void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
+{
 	SetLevel(NewLevel);
+	SetLevelBasedCurrentData(LevelBasedData);
+	LevelUp();
 }
 
 void UP3StatComponent::SetCurrentHP(float NewCurrentHP)

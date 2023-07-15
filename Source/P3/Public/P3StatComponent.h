@@ -25,7 +25,7 @@ public:
 	}
 
 	int32 GetLevel() const { return Level; }
-	void SetLevel(int32 NewLevel);
+	void SetLevel(int32 NewLevel) { this->Level = NewLevel; }
 
 	float GetCurrentHP() const { return CurrentHP; }
 	void SetCurrentHP(float NewCurrentHP);
@@ -52,7 +52,8 @@ public:
 	void SetLevelBasedCurrentData(FP3CharacterData* NewLevelBasedData) { this->LevelBasedCurrentData = NewLevelBasedData; }
 	
 	void AddExp(float GainedExp);
-	
+	void LevelUp();
+
 	void SetStatFromDataTable(int32 NewLevel, FP3CharacterData* _LevelBasedData);
 
 	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }
