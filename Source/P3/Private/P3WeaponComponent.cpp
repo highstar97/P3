@@ -27,6 +27,11 @@ void UP3WeaponComponent::EquipWeapon(AP3Weapon* NewWeapon)
 	Weapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 }
 
+void UP3WeaponComponent::HideWeapon(bool NewHidden)
+{
+	Weapon->GetWeaponMeshComponent()->SetHiddenInGame(NewHidden);
+}
+
 void UP3WeaponComponent::DestroyWeapon()
 {
 	Weapon->Destroy();

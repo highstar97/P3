@@ -27,6 +27,12 @@ UP3HeroAnimInstance::UP3HeroAnimInstance()
 	{
 		AttackMontage4 = ATTACK_MONTAGE_D.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SKILL_MONTAGE_1(TEXT("/Game/ParagonKwang/Characters/Heroes/Kwang/Animations/Skill_Blink_Wind.Skill_Blink_Wind"));
+	if (SKILL_MONTAGE_1.Succeeded())
+	{
+		Skill1Montage = SKILL_MONTAGE_1.Object;
+	}
 }
 
 void UP3HeroAnimInstance::NativeInitializeAnimation()
@@ -63,6 +69,28 @@ void UP3HeroAnimInstance::PlayAttackMontage()
 	default:
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3HeroAnimInstance] PlayAttackMontage's parameter Error."));
+		break;
+	}
+	}
+}
+
+void UP3HeroAnimInstance::PlaySkillMontage(int32 SkillNumber)
+{
+	if (P3Character->GetStateComponent()->GetbIsUsingSkill() == true)
+	{
+		return;
+	}
+
+	switch (SkillNumber)
+	{
+	case 1:
+	{
+		Montage_Play(Skill1Montage, 1.0f);
+		break;
+	}
+	default:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3HeroAnimInstance] PlaySkillMontage's parameter Error."));
 		break;
 	}
 	}

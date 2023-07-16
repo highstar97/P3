@@ -14,6 +14,7 @@ public:
 	
 	virtual void NativeInitializeAnimation() override;
 	virtual void PlayAttackMontage() override;
+	virtual void PlaySkillMontage(int32 SkillNumber) override;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
@@ -27,4 +28,7 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 		UAnimMontage* AttackMontage4;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
+		UAnimMontage* Skill1Montage;
 };

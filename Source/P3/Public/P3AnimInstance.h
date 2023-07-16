@@ -16,17 +16,24 @@ public:
 
 	virtual void NativeInitializeAnimation() override;
 	virtual void PlayAttackMontage();
+	virtual void PlaySkillMontage(int32 SkillNumber);
 
 protected:
 	UFUNCTION()
 		virtual void AnimNotify_StartAttack();
 
 	UFUNCTION()
+		virtual void AnimNotify_EndAttack();
+
+	UFUNCTION()
 		virtual void AnimNotify_SaveAttack();
 
 	UFUNCTION()
-		virtual void AnimNotify_EndAttack();
+		virtual void AnimNotify_StartSkill();
 
+	UFUNCTION()
+		virtual void AnimNotify_EndSkill();
+	
 	UFUNCTION()
 		virtual void AnimNotify_ResetCombo();
 

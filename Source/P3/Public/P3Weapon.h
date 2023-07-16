@@ -12,6 +12,8 @@ class P3_API AP3Weapon : public AActor
 public:	
 	AP3Weapon();
 
+	USkeletalMeshComponent* GetWeaponMeshComponent() { return WeaponMeshComponent; }
+
 	float GetRaidus() const { return Radius; }
 
 protected:

@@ -2,6 +2,7 @@
 #include "P3HeroController.h"
 #include "P3StatComponent.h"
 #include "P3StateComponent.h"
+#include "P3SkillComponent.h"
 #include "P3WeaponComponent.h"
 #include "P3GameInstance.h"
 #include "P3HUDWidget.h"
@@ -47,6 +48,7 @@ AP3Character::AP3Character()
 
 	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
 	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
+	SkillComponent = CreateDefaultSubobject<UP3SkillComponent>(TEXT("SkillComponent"));
 	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
 
 	SetCharacterType(ECharacterType::None);
@@ -82,6 +84,7 @@ void AP3Character::BeginPlay()
 	}
 	
 	InitStat();
+	InitSkill();
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -92,6 +95,7 @@ void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AP3Character::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AP3Character::Look);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AP3Character::Attack);
+		EnhancedInputComponent->BindAction(Skill1Action, ETriggerEvent::Triggered, this, &AP3Character::Skill1);
 	}
 }
 
@@ -120,9 +124,19 @@ void AP3Character::InitStat()
 	
 }
 
+void AP3Character::InitSkill()
+{
+
+}
+
 void AP3Character::Attack()
 {
 	
+}
+
+void AP3Character::Skill1()
+{
+
 }
 
 void AP3Character::Die()
@@ -154,8 +168,8 @@ void AP3Character::LevelUp()
 
 void AP3Character::Move(const FInputActionValue& Value)
 {
-	// when Character IsAttacking, Can't Move.
-	if (StateComponent->GetbIsAttacking())
+	// when Character IsAttacking or IsUsingSkill, Can't Move.
+	if (StateComponent->GetbIsAttacking() || StateComponent->GetbIsUsingSkill())
 	{
 		return;
 	}
@@ -197,6 +211,16 @@ void AP3Character::Look(const FInputActionValue& Value)
 void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
+}
+
+bool AP3Character::ConsumeMP(float UsedMP)
+{
+	if (StatComponent->GetCurrentMP() < UsedMP)
+	{
+		return false;
+	}
+	StatComponent->ConsumeMP(UsedMP);
+	return true;
 }
 
 float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)

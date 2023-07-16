@@ -23,9 +23,18 @@ void UP3AnimInstance::PlayAttackMontage()
 	
 }
 
+void UP3AnimInstance::PlaySkillMontage(int32 SkillNumber)
+{
+}
+
 void UP3AnimInstance::AnimNotify_StartAttack()
 {
 	P3Character->GetStateComponent()->SetbIsAttacking(true);
+}
+
+void UP3AnimInstance::AnimNotify_EndAttack()
+{
+	P3Character->GetStateComponent()->SetbIsAttacking(false);
 }
 
 void UP3AnimInstance::AnimNotify_SaveAttack()
@@ -41,9 +50,14 @@ void UP3AnimInstance::AnimNotify_SaveAttack()
 	}
 }
 
-void UP3AnimInstance::AnimNotify_EndAttack()
+void UP3AnimInstance::AnimNotify_StartSkill()
 {
-	P3Character->GetStateComponent()->SetbIsAttacking(false);
+	P3Character->GetStateComponent()->SetbIsUsingSkill(true);
+}
+
+void UP3AnimInstance::AnimNotify_EndSkill()
+{
+	P3Character->GetStateComponent()->SetbIsUsingSkill(false);
 }
 
 void UP3AnimInstance::AnimNotify_ResetCombo()

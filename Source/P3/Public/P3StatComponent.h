@@ -51,9 +51,10 @@ public:
 	FP3CharacterData* GetLevelBasedCurrentData() const { return LevelBasedCurrentData; }
 	void SetLevelBasedCurrentData(FP3CharacterData* NewLevelBasedData) { this->LevelBasedCurrentData = NewLevelBasedData; }
 	
-	void AddExp(float GainedExp);
 	void LevelUp();
-
+	void ConsumeMP(float UsedMP);
+	void AddExp(float GainedExp);
+	
 	void SetStatFromDataTable(int32 NewLevel, FP3CharacterData* _LevelBasedData);
 
 	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }

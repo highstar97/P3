@@ -23,6 +23,9 @@ public:
 	bool GetbIsAttacking() const { return bIsAttacking; }
 	void SetbIsAttacking(bool NewbIsAttacking) { this->bIsAttacking = NewbIsAttacking; }
 
+	bool GetbIsUsingSkill() const { return bIsUsingSkill; }
+	void SetbIsUsingSkill(bool NewbIsUsingSkill) { this->bIsUsingSkill = NewbIsUsingSkill; }
+
 	bool GetbIsInAir() const { return bIsInAir; }
 	void SetbIsInAir(bool NewbIsInAir) { this->bIsInAir = NewbIsInAir; }
 
@@ -59,6 +62,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 		bool bIsAttacking;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+		bool bIsUsingSkill;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 		bool bIsInAir;

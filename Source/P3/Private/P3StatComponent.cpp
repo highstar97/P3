@@ -1,16 +1,6 @@
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
 
-void UP3StatComponent::AddExp(float GainedExp)
-{
-	CurrentExp += GainedExp;
-	if (CurrentExp >= RequiredExp)
-	{
-		CurrentExp -= RequiredExp;
-		OnLevelUp.Broadcast();
-	}
-	OnExpChanged.Broadcast();
-}
 
 void UP3StatComponent::LevelUp()
 {
@@ -30,6 +20,23 @@ void UP3StatComponent::LevelUp()
 
 	OnHPChanged.Broadcast();
 	OnMPChanged.Broadcast();
+	OnExpChanged.Broadcast();
+}
+
+void UP3StatComponent::ConsumeMP(float UsedMP)
+{
+	CurrentMP -= UsedMP;
+	OnMPChanged.Broadcast();
+}
+
+void UP3StatComponent::AddExp(float GainedExp)
+{
+	CurrentExp += GainedExp;
+	if (CurrentExp >= RequiredExp)
+	{
+		CurrentExp -= RequiredExp;
+		OnLevelUp.Broadcast();
+	}
 	OnExpChanged.Broadcast();
 }
 

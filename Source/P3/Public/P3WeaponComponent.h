@@ -15,6 +15,7 @@ public:
 	UP3WeaponComponent();
 
 	void EquipWeapon(AP3Weapon* NewWeapon);
+	void HideWeapon(bool NewHidden);
 	void DestroyWeapon();
 
 	UFUNCTION(BlueprintCallable)

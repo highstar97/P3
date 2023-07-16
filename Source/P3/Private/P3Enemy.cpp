@@ -38,10 +38,20 @@ void AP3Enemy::InitStat()
 	}
 }
 
+void AP3Enemy::InitSkill()
+{
+	Super::InitSkill();
+}
+
 void AP3Enemy::Attack()
 {
 	Super::Attack();
 	EnemyAnim->PlayAttackMontage();
+}
+
+void AP3Enemy::Skill1()
+{
+	Super::Skill1();
 }
 
 void AP3Enemy::Die()
