@@ -2,6 +2,7 @@
 #include "P3StatComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 
 void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStat)
 {
@@ -12,6 +13,42 @@ void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStat)
 		NewStat->OnMPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_MP);
 		NewStat->OnExpChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_Exp);
 	}
+}
+
+void UP3HUDWidget::InitHUDWidget(FString NewSkill1Name)
+{
+	if (Text_Skill1 != nullptr)
+	{
+		Skill1Name = NewSkill1Name;
+		Text_Skill1->SetText(FText::FromString(NewSkill1Name));
+	}
+}
+	
+void UP3HUDWidget::StartUpdateButtonSkill1(float NewCoolTime)
+{
+	if (Text_Skill1 != nullptr)
+	{
+		int32 RemainingTime = FMath::FloorToInt(NewCoolTime);
+		Text_Skill1->SetText(FText::FromString(FString::FromInt(RemainingTime)));
+
+		GetWorld()->GetTimerManager().SetTimer(Skill1CoolTimeHandle, [this, RemainingTime, NewCoolTime]()mutable -> void
+			{
+				if (--RemainingTime > 0)
+				{
+					Text_Skill1->SetText(FText::FromString(FString::FromInt(RemainingTime)));
+				}
+				else
+				{
+					Text_Skill1->SetText(FText::FromString(FString::Printf(TEXT("%s"),*Skill1Name)));
+					EndUpdateButtonSkill1();
+				}
+			}, 1.0f, true);
+	}
+}
+
+void UP3HUDWidget::EndUpdateButtonSkill1()
+{
+	GetWorld()->GetTimerManager().ClearTimer(Skill1CoolTimeHandle);
 }
 
 void UP3HUDWidget::UpdateHUDWidget_HP()

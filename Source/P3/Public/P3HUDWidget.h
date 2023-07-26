@@ -2,11 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "P3HUDWidget.generated.h"
 
 class UP3StatComponent;
 class UProgressBar;
 class UTextBlock;
+class UButton;
 
 UCLASS()
 class P3_API UP3HUDWidget : public UUserWidget
@@ -15,6 +17,14 @@ class P3_API UP3HUDWidget : public UUserWidget
 	
 public:
 	void BindCharacterStat(UP3StatComponent* NewStat);
+
+	void InitHUDWidget(FString NewSkill1Name);
+
+	void SetEnableButtonSkill1(bool NewbEnableButton) { Button_Skill1->SetIsEnabled(NewbEnableButton); }
+	void SetEnableButtonSkill2(bool NewbEnableButton) { Button_Skill2->SetIsEnabled(NewbEnableButton); }
+
+	void StartUpdateButtonSkill1(float NewCoolTime);
+	void EndUpdateButtonSkill1();
 
 protected:
 	void UpdateHUDWidget_HP();
@@ -50,4 +60,21 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* Text_RequiredExp;
+
+	// Button Skill1
+	UPROPERTY(meta = (BindWidget))
+		UButton* Button_Skill1;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* Text_Skill1;
+
+	FTimerHandle Skill1CoolTimeHandle;
+
+	FString Skill1Name;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* Button_Skill2;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* Text_Skill2;
 };

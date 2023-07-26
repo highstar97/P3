@@ -1,10 +1,12 @@
 #include "P3Hero.h"
+#include "P3HeroController.h"
 #include "P3HeroAnimInstance.h"
 #include "P3GameInstance.h"
 #include "P3StatComponent.h"
 #include "P3StateComponent.h"
 #include "P3SkillComponent.h"
 #include "P3WeaponComponent.h"
+#include "P3HUDWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -25,6 +27,8 @@ AP3Hero::AP3Hero()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	GetSkillComponent()->SetSkill1Name(FString::Printf(TEXT("Blink")));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> HERO_ANIM(TEXT("/Game/Blueprints/HeroAnimBP.HeroAnimBP_C"));
 	if (HERO_ANIM.Succeeded())
@@ -78,6 +82,7 @@ void AP3Hero::Skill1()
 {
 	Super::Skill1();
 
+	// IsSkill1Cool?
 	if (GetSkillComponent()->GetbIsSkill1Cool() == true)
 	{
 		// CoolTime
@@ -91,11 +96,24 @@ void AP3Hero::Skill1()
 		return;
 	}
 	
+	AP3HeroController* HeroController = Cast<AP3HeroController>(Controller);
+	if (HeroController == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] : Can't Access to Controller."));
+	}
+
+	// DisableButtonSkill1 in HUD.
+	HeroController->GetHUDWidget()->SetEnableButtonSkill1(false);
+	
+	// Start HUD Skill1 CoolTime UpdateTimer
+	HeroController->GetHUDWidget()->StartUpdateButtonSkill1(GetSkillComponent()->GetSkill1CoolTime());
+
 	// CoolTime;
 	GetSkillComponent()->SetbIsSkill1Cool(true);
 	FTimerHandle CoolTimerHandle = {};
-	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
+	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, FTimerDelegate::CreateLambda([this, HeroController]() -> void {
 		GetSkillComponent()->SetbIsSkill1Cool(false);
+		HeroController->GetHUDWidget()->SetEnableButtonSkill1(true);
 		}), GetSkillComponent()->GetSkill1CoolTime(), false);
 
 	// Skill1 

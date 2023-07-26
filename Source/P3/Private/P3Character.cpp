@@ -136,7 +136,7 @@ void AP3Character::Attack()
 
 void AP3Character::Skill1()
 {
-
+	
 }
 
 void AP3Character::Die()

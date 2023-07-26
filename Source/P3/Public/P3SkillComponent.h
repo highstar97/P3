@@ -41,6 +41,9 @@ public:
 	FP3SkillData* GetSkill1DataFromTable(int32 FromLevel);
 	void SetSkill1DataFromLevel(int32 FromLevel);
 
+	FString GetSkill1Name() const { return Skill1Name; }
+	void SetSkill1Name(FString NewSkill1Name) { Skill1Name = NewSkill1Name; }
+
 	int32 GetSkill1Level() const { return Skill1Data->Level; }
 	float GetSkill1NeededMP() const { return Skill1Data->NeededMP; }
 	float GetSkill1CoolTime() const { return Skill1Data->CoolTime; }
@@ -59,4 +62,6 @@ private:
 		UDataTable* Skill1DataTable;
 
 	FP3SkillData* Skill1Data;
+
+	FString Skill1Name;
 };
