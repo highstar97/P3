@@ -1,28 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
 #include "Components/ActorComponent.h"
+#include "P3GameInstance.h"
 #include "P3SkillComponent.generated.h"
 
-USTRUCT(BlueprintType)
-struct FP3SkillData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	FP3SkillData() : Level(1), NeededMP(10.0f), CoolTime(1.0f) {}
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		int32 Level;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float NeededMP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float CoolTime;
-};
+struct FP3SkillData;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3SkillComponent : public UActorComponent
@@ -35,18 +18,15 @@ public:
 	bool GetbIsSkill1Cool() const{ return bIsSkill1Cool; }
 	void SetbIsSkill1Cool(bool NewbIsSkill1Cool) { this->bIsSkill1Cool = NewbIsSkill1Cool; }
 
-	UDataTable* GetSkill1DataTable() const { return Skill1DataTable; }
-	void SetSkill1DataTable(UDataTable* NewSkill1DataTable) { this->Skill1DataTable = NewSkill1DataTable; }
+	FP3SkillData* GetCurrentSkill1Data() const { return CurrentSkill1Data; }
+	void SetCurrentSkill1Data(FP3SkillData* NewSkillData) { this->CurrentSkill1Data = NewSkillData; }
 
-	FP3SkillData* GetSkill1DataFromTable(int32 FromLevel);
-	void SetSkill1DataFromLevel(int32 FromLevel);
+	int32 GetSkill1Level() const { return CurrentSkill1Data->Level; }
+	float GetSkill1NeededMP() const { return CurrentSkill1Data->NeededMP; }
+	float GetSkill1CoolTime() const { return CurrentSkill1Data->CoolTime; }
 
 	FString GetSkill1Name() const { return Skill1Name; }
 	void SetSkill1Name(FString NewSkill1Name) { Skill1Name = NewSkill1Name; }
-
-	int32 GetSkill1Level() const { return Skill1Data->Level; }
-	float GetSkill1NeededMP() const { return Skill1Data->NeededMP; }
-	float GetSkill1CoolTime() const { return Skill1Data->CoolTime; }
 
 	// Skill LevelUp will be soon...
 	// void SkillLevelUp();
@@ -58,10 +38,8 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Skill, meta = (AllowPrivateAccess = "true"))
 		bool bIsSkill1Cool;
 
-	UPROPERTY()
-		UDataTable* Skill1DataTable;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Skill, meta = (AllowPrivateAccess = "true"))
+		FString Skill1Name;
 
-	FP3SkillData* Skill1Data;
-
-	FString Skill1Name;
+	FP3SkillData* CurrentSkill1Data;
 };

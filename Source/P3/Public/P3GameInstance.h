@@ -46,6 +46,25 @@ public:
 		float DropExp;
 };
 
+USTRUCT(BlueprintType)
+struct FP3SkillData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FP3SkillData() : Level(1), NeededMP(10.0f), CoolTime(1.0f) {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		float NeededMP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		float CoolTime;
+};
+
 UCLASS()
 class P3_API UP3GameInstance : public UGameInstance
 {
@@ -58,6 +77,7 @@ public:
 
 	FP3CharacterData* GetP3HeroData(int32 FromLevel);
 	FP3EnemyData* GetP3EnemyData(int32 FromLevel);
+	FP3SkillData* GetHeroSkill1Data(int32 FromLevel);
 
 private:
 	UPROPERTY()
@@ -65,4 +85,7 @@ private:
 
 	UPROPERTY()
 		UDataTable* P3EnemyDataTable;
+
+	UPROPERTY()
+		UDataTable* HeroSkill1DataTable;
 };

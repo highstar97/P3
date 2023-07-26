@@ -54,14 +54,13 @@ public:
 	void LevelUp();
 	void ConsumeMP(float UsedMP);
 	void AddExp(float GainedExp);
-	
+	void TakeDamage(float TakenDamage);
+
 	void SetStatFromDataTable(int32 NewLevel, FP3CharacterData* _LevelBasedData);
 
 	float GetHPRatio() const { return GetCurrentHP() / GetMaxHP(); }
 	float GetMPRatio() const { return GetCurrentMP() / GetMaxMP(); }
 	float GetExpRatio() const { return GetCurrentExp() / GetRequiredExp(); }
-
-	float TakeDamage(float TakenDamage);
 
 	FOnHPChangedDelegate OnHPChanged;
 	FOnHPIsZeroDelegate OnHPIsZero;

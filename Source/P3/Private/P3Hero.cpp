@@ -36,16 +36,6 @@ AP3Hero::AP3Hero()
 		GetMesh()->SetAnimInstanceClass(HERO_ANIM.Class);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> DT_SKILL1(TEXT("/Game/GameData/P3HeroSkill1Data.P3HeroSkill1Data"));
-	if (DT_SKILL1.Succeeded())
-	{
-		GetSkillComponent()->SetSkill1DataTable(DT_SKILL1.Object);
-		if (GetSkillComponent()->GetSkill1DataTable()->GetRowMap().Num() <= 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3Hero] No data inside Skill1DataTable."));
-		}
-	}
-
 	SetCharacterType(ECharacterType::Hero);
 }
 
@@ -67,7 +57,16 @@ void AP3Hero::InitStat()
 void AP3Hero::InitSkill()
 {
 	Super::InitSkill();
-	GetSkillComponent()->SetSkill1DataFromLevel(1);
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (P3GameInstance != nullptr)
+	{
+		FP3SkillData* LevelBasedSkill1Data = P3GameInstance->GetHeroSkill1Data(1);
+		GetSkillComponent()->SetCurrentSkill1Data(LevelBasedSkill1Data);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] GameInstance is NULL."))
+	}
 }
 
 void AP3Hero::Attack()

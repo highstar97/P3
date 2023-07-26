@@ -64,19 +64,19 @@ void AP3Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 
-		HeroController->GetHUDWidget()->BindCharacterStat(StatComponent);
+		HeroController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
 	}
 	
-	AP3Weapon* CurrentWeapon = WeaponComponent->SpawnBasicSword();
+	AP3Weapon* CurrentWeapon = GetWeaponComponent()->SpawnBasicSword();
 	if (CurrentWeapon != nullptr)
 	{
-		WeaponComponent->EquipWeapon(CurrentWeapon);
+		GetWeaponComponent()->EquipWeapon(CurrentWeapon);
 	}
 
 	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
 	if (HPBarWidget != nullptr)
 	{
-		HPBarWidget->BindCharacterStat(StatComponent);
+		HPBarWidget->BindCharacterStat(GetStatComponent());
 	}
 	else
 	{
@@ -103,19 +103,19 @@ void AP3Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	StatComponent->OnHPIsZero.AddUObject(this, &AP3Character::Die);
-	StatComponent->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
+	GetStatComponent()->OnHPIsZero.AddUObject(this, &AP3Character::Die);
+	GetStatComponent()->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
 }
 
 void AP3Character::Jump()
 {
-	StateComponent->SetbIsInAir(true);
+	GetStateComponent()->SetbIsInAir(true);
 	Super::Jump();
 }
 
 void AP3Character::StopJumping()
 {
-	StateComponent->SetbIsInAir(false);
+	GetStateComponent()->SetbIsInAir(false);
 	Super::StopJumping();
 }
 
@@ -142,10 +142,10 @@ void AP3Character::Skill1()
 void AP3Character::Die()
 {
 	FTimerHandle DeadTimerHandle = {};
-	StateComponent->SetbIsDead(true);
+	GetStateComponent()->SetbIsDead(true);
 	SetActorEnableCollision(false);
 	HPBarWidgetComponent->SetHiddenInGame(true);
-	WeaponComponent->DestroyWeapon();
+	GetWeaponComponent()->DestroyWeapon();
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 		Destroy();
 		}), 3.0f, false);
@@ -169,7 +169,7 @@ void AP3Character::LevelUp()
 void AP3Character::Move(const FInputActionValue& Value)
 {
 	// when Character IsAttacking or IsUsingSkill, Can't Move.
-	if (StateComponent->GetbIsAttacking() || StateComponent->GetbIsUsingSkill())
+	if (GetStateComponent()->GetbIsAttacking() || GetStateComponent()->GetbIsUsingSkill())
 	{
 		return;
 	}
@@ -215,23 +215,24 @@ void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 
 bool AP3Character::ConsumeMP(float UsedMP)
 {
-	if (StatComponent->GetCurrentMP() < UsedMP)
+	float CalculatedMP = UsedMP;	// if character has buff/debuff, UsedMP can changed.
+	if (GetStatComponent()->GetCurrentMP() < CalculatedMP)
 	{
 		return false;
 	}
-	StatComponent->ConsumeMP(UsedMP);
+	GetStatComponent()->ConsumeMP(CalculatedMP);
 	return true;
 }
 
 float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
 {
-	if (EventInstigatorActor->StatComponent->GetLevelBasedCurrentData() == nullptr)
+	if (EventInstigatorActor->GetStatComponent()->GetLevelBasedCurrentData() == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Character] When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat."));
 		return 0.0f;
 	}
 
-	float InitialDamage = EventInstigatorActor->StatComponent->GetAttack();
+	float InitialDamage = EventInstigatorActor->GetStatComponent()->GetAttack();
 
 	// Team Judgment
 	if (this->GetCharacterType() == ECharacterType::None || EventInstigatorActor->GetCharacterType() == ECharacterType::None)
@@ -244,10 +245,12 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 		return 0.0f;
 	}
 
-	float FinalDamage = this->StatComponent->TakeDamage(InitialDamage);
+	// Damage logic : Damage = Attack (when defense stat update? will changed?)
+	float FinalDamage = InitialDamage;	
+	GetStatComponent()->TakeDamage(FinalDamage);
 
 	// Exp Logic
-	if (this->StateComponent->GetbIsDead())
+	if (GetStateComponent()->GetbIsDead())
 	{
 		// when Multiplay, Each PlayerController's bIsPlayerController is all true?
 		if (EventInstigator->IsPlayerController())

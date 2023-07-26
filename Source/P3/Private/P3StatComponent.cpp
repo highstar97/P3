@@ -1,6 +1,18 @@
 #include "P3StatComponent.h"
 #include "P3GameInstance.h"
 
+void UP3StatComponent::SetCurrentHP(float NewCurrentHP)
+{
+	this->CurrentHP = NewCurrentHP;
+
+	OnHPChanged.Broadcast();
+
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		CurrentHP = 0.0f;
+		OnHPIsZero.Broadcast();
+	}
+}
 
 void UP3StatComponent::LevelUp()
 {
@@ -40,34 +52,16 @@ void UP3StatComponent::AddExp(float GainedExp)
 	OnExpChanged.Broadcast();
 }
 
+void UP3StatComponent::TakeDamage(float TakenDamage)
+{
+	SetCurrentHP(FMath::Clamp(GetCurrentHP() - TakenDamage, 0.0f, GetMaxHP()));
+}
+
 void UP3StatComponent::SetStatFromDataTable(int32 NewLevel, FP3CharacterData* LevelBasedData)
 {
 	SetLevel(NewLevel);
 	SetLevelBasedCurrentData(LevelBasedData);
 	LevelUp();
-}
-
-void UP3StatComponent::SetCurrentHP(float NewCurrentHP)
-{
-	this->CurrentHP = NewCurrentHP;
-
-	OnHPChanged.Broadcast();
-
-	if (CurrentHP < KINDA_SMALL_NUMBER)
-	{
-		CurrentHP = 0.0f;
-		OnHPIsZero.Broadcast();
-	}
-}
-
-float UP3StatComponent::TakeDamage(float TakenDamage)
-{
-	// Damage logic : Damage = Attack (when defense stat update? will changed?)
-	float Damage = TakenDamage;
-	
-	SetCurrentHP(FMath::Clamp(GetCurrentHP() - Damage,0.0f,GetMaxHP()));
-
-	return Damage;
 }
 
 void UP3StatComponent::BeginPlay()
