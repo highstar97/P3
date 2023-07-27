@@ -4,6 +4,7 @@
 #include "P3StateComponent.h"
 #include "P3SkillComponent.h"
 #include "P3WeaponComponent.h"
+#include "P3BuffComponent.h"
 #include "P3GameInstance.h"
 #include "P3HUDWidget.h"
 #include "P3HPBarWidget.h"
@@ -50,6 +51,7 @@ AP3Character::AP3Character()
 	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
 	SkillComponent = CreateDefaultSubobject<UP3SkillComponent>(TEXT("SkillComponent"));
 	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
+	BuffComponent = CreateDefaultSubobject<UP3BuffComponent>(TEXT("BuffComponent"));
 
 	SetCharacterType(ECharacterType::None);
 }
@@ -96,6 +98,7 @@ void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AP3Character::Look);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AP3Character::Attack);
 		EnhancedInputComponent->BindAction(Skill1Action, ETriggerEvent::Triggered, this, &AP3Character::Skill1);
+		EnhancedInputComponent->BindAction(Skill2Action, ETriggerEvent::Triggered, this, &AP3Character::Skill2);
 	}
 }
 
@@ -105,6 +108,8 @@ void AP3Character::PostInitializeComponents()
 
 	GetStatComponent()->OnHPIsZero.AddUObject(this, &AP3Character::Die);
 	GetStatComponent()->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
+	
+	GetBuffComponent()->OnHealBuffStarted.AddUObject(this, &AP3Character::Heal);
 }
 
 void AP3Character::Jump()
@@ -137,6 +142,11 @@ void AP3Character::Attack()
 void AP3Character::Skill1()
 {
 	
+}
+
+void AP3Character::Skill2()
+{
+
 }
 
 void AP3Character::Die()
@@ -208,9 +218,40 @@ void AP3Character::Look(const FInputActionValue& Value)
 	}
 }
 
+void AP3Character::DeleteTimer(FTimerHandle DeleteTimer)
+{
+	GetWorld()->GetTimerManager().ClearTimer(DeleteTimer);
+}
+
 void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
+}
+
+void AP3Character::Heal(float Duration, float TotalHealAmount)
+{
+	if (Duration == 0.0f)
+	{
+		GetStatComponent()->TakeDamage(-1 * TotalHealAmount);
+	}
+	else
+	{
+		float RemainingTime = Duration;
+		float HealPerSecond = TotalHealAmount / Duration;
+		GetStatComponent()->TakeDamage(-1 * HealPerSecond);	// To heal immediately when the skill starts.
+		FTimerHandle HealTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, [this, RemainingTime, HealPerSecond, HealTimerHandle]()mutable -> void
+			{
+				if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
+				{
+					GetStatComponent()->TakeDamage(-1 * HealPerSecond);
+				}
+				else
+				{
+					DeleteTimer(HealTimerHandle);
+				}
+			}, 1.0f, true);
+	}
 }
 
 bool AP3Character::ConsumeMP(float UsedMP)

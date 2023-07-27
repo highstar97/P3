@@ -78,6 +78,7 @@ public:
 	FP3CharacterData* GetP3HeroData(int32 FromLevel);
 	FP3EnemyData* GetP3EnemyData(int32 FromLevel);
 	FP3SkillData* GetHeroSkill1Data(int32 FromLevel);
+	FP3SkillData* GetHeroSkill2Data(int32 FromLevel);
 
 private:
 	UPROPERTY()
@@ -88,4 +89,7 @@ private:
 
 	UPROPERTY()
 		UDataTable* HeroSkill1DataTable;
+
+	UPROPERTY()
+		UDataTable* HeroSkill2DataTable;
 };

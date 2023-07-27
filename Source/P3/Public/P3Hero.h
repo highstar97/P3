@@ -18,6 +18,7 @@ public:
 	virtual void InitSkill() override;
 	virtual void Attack() override;
 	virtual void Skill1() override;
+	virtual void Skill2() override;
 	virtual void Die() override;
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

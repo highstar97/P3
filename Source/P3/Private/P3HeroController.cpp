@@ -23,7 +23,8 @@ void AP3HeroController::BeginPlay()
 		if (P3Character != nullptr)
 		{
 			FString Skill1Name = P3Character->GetSkillComponent()->GetSkill1Name();
-			HUDWidget->InitHUDWidget(Skill1Name);
+			FString Skill2Name = P3Character->GetSkillComponent()->GetSkill2Name();
+			HUDWidget->InitHUDWidget(Skill1Name, Skill2Name);
 		}
 		HUDWidget->AddToViewport();
 	}

@@ -15,12 +15,18 @@ void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStat)
 	}
 }
 
-void UP3HUDWidget::InitHUDWidget(FString NewSkill1Name)
+void UP3HUDWidget::InitHUDWidget(FString NewSkill1Name, FString NewSkill2Name)
 {
 	if (Text_Skill1 != nullptr)
 	{
 		Skill1Name = NewSkill1Name;
 		Text_Skill1->SetText(FText::FromString(NewSkill1Name));
+	}
+
+	if (Text_Skill2 != nullptr)
+	{
+		Skill2Name = NewSkill2Name;
+		Text_Skill2->SetText(FText::FromString(NewSkill2Name));
 	}
 }
 	
@@ -46,9 +52,36 @@ void UP3HUDWidget::StartUpdateButtonSkill1(float NewCoolTime)
 	}
 }
 
+void UP3HUDWidget::StartUpdateButtonSkill2(float NewCoolTime)
+{
+	if (Text_Skill2 != nullptr)
+	{
+		int32 RemainingTime = FMath::FloorToInt(NewCoolTime);
+		Text_Skill2->SetText(FText::FromString(FString::FromInt(RemainingTime)));
+
+		GetWorld()->GetTimerManager().SetTimer(Skill2CoolTimeHandle, [this, RemainingTime, NewCoolTime]()mutable -> void
+			{
+				if (--RemainingTime > 0)
+				{
+					Text_Skill2->SetText(FText::FromString(FString::FromInt(RemainingTime)));
+				}
+				else
+				{
+					Text_Skill2->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Skill2Name)));
+					EndUpdateButtonSkill2();
+				}
+			}, 1.0f, true);
+	}
+}
+
 void UP3HUDWidget::EndUpdateButtonSkill1()
 {
 	GetWorld()->GetTimerManager().ClearTimer(Skill1CoolTimeHandle);
+}
+
+void UP3HUDWidget::EndUpdateButtonSkill2()
+{
+	GetWorld()->GetTimerManager().ClearTimer(Skill2CoolTimeHandle);
 }
 
 void UP3HUDWidget::UpdateHUDWidget_HP()

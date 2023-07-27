@@ -7,6 +7,7 @@ UP3SkillComponent::UP3SkillComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	bIsSkill1Cool = false;
+	bIsSkill2Cool = false;
 }
 
 void UP3SkillComponent::BeginPlay()

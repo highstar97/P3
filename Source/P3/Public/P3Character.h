@@ -14,6 +14,7 @@ class UP3StatComponent;
 class UP3StateComponent;
 class UP3SkillComponent;
 class UP3WeaponComponent;
+class UP3BuffComponent;
 class UInputMappingContext;
 class UInputAction;
 class UP3StatComponent;
@@ -38,6 +39,7 @@ public:
 	UP3StateComponent* GetStateComponent() const { return StateComponent; }
 	UP3SkillComponent* GetSkillComponent() const { return SkillComponent; }
 	UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
+	UP3BuffComponent* GetBuffComponent() const { return BuffComponent; }
 
 	ECharacterType GetCharacterType() const { return CharacterType; }
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
@@ -51,8 +53,11 @@ protected:
 	
 	virtual void InitStat();
 	virtual void InitSkill();
+
 	virtual void Attack();
 	virtual void Skill1();
+	virtual void Skill2();
+
 	virtual void Die();	
 
 	void LevelUp();
@@ -60,8 +65,12 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
+	void DeleteTimer(FTimerHandle DeleteTimer);
+
 	UFUNCTION(BlueprintCallable)
 		void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
+
+	void Heal(float Duration, float TotalHealAmount);
 
 	bool ConsumeMP(float UsedMP);
 
@@ -80,6 +89,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 		UP3WeaponComponent* WeaponComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
+		UP3BuffComponent* BuffComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		UWidgetComponent* HPBarWidgetComponent;
@@ -101,6 +113,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		UInputAction* Skill1Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		UInputAction* Skill2Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 		ECharacterType CharacterType = ECharacterType::None;

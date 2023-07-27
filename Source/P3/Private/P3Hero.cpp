@@ -6,6 +6,9 @@
 #include "P3StateComponent.h"
 #include "P3SkillComponent.h"
 #include "P3WeaponComponent.h"
+#include "P3BuffComponent.h"
+#include "P3Buff.h"
+#include "P3Heal.h"
 #include "P3HUDWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -29,6 +32,7 @@ AP3Hero::AP3Hero()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	GetSkillComponent()->SetSkill1Name(FString::Printf(TEXT("Blink")));
+	GetSkillComponent()->SetSkill2Name(FString::Printf(TEXT("Heal")));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> HERO_ANIM(TEXT("/Game/Blueprints/HeroAnimBP.HeroAnimBP_C"));
 	if (HERO_ANIM.Succeeded())
@@ -60,8 +64,13 @@ void AP3Hero::InitSkill()
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (P3GameInstance != nullptr)
 	{
+		// Skill1
 		FP3SkillData* LevelBasedSkill1Data = P3GameInstance->GetHeroSkill1Data(1);
 		GetSkillComponent()->SetCurrentSkill1Data(LevelBasedSkill1Data);
+
+		// Skill2
+		FP3SkillData* LevelBasedSkill2Data = P3GameInstance->GetHeroSkill2Data(1);
+		GetSkillComponent()->SetCurrentSkill2Data(LevelBasedSkill2Data);
 	}
 	else
 	{
@@ -100,12 +109,13 @@ void AP3Hero::Skill1()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] : Can't Access to Controller."));
 	}
+	{
+		// DisableButtonSkill1 in HUD.
+		HeroController->GetHUDWidget()->SetEnableButtonSkill1(false);
 
-	// DisableButtonSkill1 in HUD.
-	HeroController->GetHUDWidget()->SetEnableButtonSkill1(false);
-	
-	// Start HUD Skill1 CoolTime UpdateTimer
-	HeroController->GetHUDWidget()->StartUpdateButtonSkill1(GetSkillComponent()->GetSkill1CoolTime());
+		// Start HUD Skill1 CoolTime UpdateTimer
+		HeroController->GetHUDWidget()->StartUpdateButtonSkill1(GetSkillComponent()->GetSkill1CoolTime());
+	}
 
 	// CoolTime;
 	GetSkillComponent()->SetbIsSkill1Cool(true);
@@ -169,6 +179,53 @@ void AP3Hero::Skill1()
 		GetMesh()->SetHiddenInGame(false);
 		GetWeaponComponent()->HideWeapon(false);
 		}), 0.3f, false);
+}
+
+// Hero's Skill2 is Buff.
+void AP3Hero::Skill2()
+{
+	Super::Skill2();
+
+	// IsSkill2Cool?
+	if (GetSkillComponent()->GetbIsSkill2Cool() == true)
+	{
+		// CoolTime
+		return;
+	}
+
+	// Consume Mana
+	if (ConsumeMP(GetSkillComponent()->GetSkill2NeededMP()) == false)
+	{
+		// Not Enough Mana
+		return;
+	}
+
+	AP3HeroController* HeroController = Cast<AP3HeroController>(Controller);
+	if (HeroController == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] : Can't Access to Controller."));
+	}
+	else
+	{
+		// DisableButtonSkill2 in HUD.
+		HeroController->GetHUDWidget()->SetEnableButtonSkill2(false);
+
+		// Start HUD Skill2 CoolTime UpdateTimer
+		HeroController->GetHUDWidget()->StartUpdateButtonSkill2(GetSkillComponent()->GetSkill2CoolTime());
+	}
+
+	// CoolTime;
+	GetSkillComponent()->SetbIsSkill2Cool(true);
+	FTimerHandle CoolTimerHandle = {};
+	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, FTimerDelegate::CreateLambda([this, HeroController]() -> void {
+		GetSkillComponent()->SetbIsSkill2Cool(false);
+		HeroController->GetHUDWidget()->SetEnableButtonSkill2(true);
+		}), GetSkillComponent()->GetSkill2CoolTime(), false);
+
+	// Skill2
+	UP3Heal* BuffHeal = NewObject<UP3Heal>();
+	BuffHeal->InitHeal(FString::Printf(TEXT("Skill2's Heal")), 10.0f, 200.0f);
+	GetBuffComponent()->ApplyBuff(BuffHeal);
 }
 
 void AP3Hero::Die()

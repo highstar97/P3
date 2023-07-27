@@ -31,6 +31,16 @@ UP3GameInstance::UP3GameInstance()
 			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside HeroSkill1DataTable."));
 		}
 	}
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_HeroSKILL2(TEXT("/Game/GameData/P3HeroSkill2Data.P3HeroSkill2Data"));
+	if (DT_HeroSKILL2.Succeeded())
+	{
+		HeroSkill2DataTable = DT_HeroSKILL2.Object;
+		if (HeroSkill2DataTable->GetRowMap().Num() <= 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside HeroSkill2DataTable."));
+		}
+	}
 }
 
 void UP3GameInstance::Init()
@@ -51,4 +61,9 @@ FP3EnemyData* UP3GameInstance::GetP3EnemyData(int32 FromLevel)
 FP3SkillData* UP3GameInstance::GetHeroSkill1Data(int32 FromLevel)
 {
 	return HeroSkill1DataTable->FindRow<FP3SkillData>(*FString::FromInt(FromLevel), TEXT(""));
+}
+
+FP3SkillData* UP3GameInstance::GetHeroSkill2Data(int32 FromLevel)
+{
+	return HeroSkill2DataTable->FindRow<FP3SkillData>(*FString::FromInt(FromLevel), TEXT(""));
 }
