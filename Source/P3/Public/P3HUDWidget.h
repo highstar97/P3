@@ -6,6 +6,9 @@
 #include "P3HUDWidget.generated.h"
 
 class UP3StatComponent;
+class UP3BuffComponent;
+class UP3Buff;
+class UP3BuffArrayWidget;
 class UProgressBar;
 class UTextBlock;
 class UButton;
@@ -16,7 +19,8 @@ class P3_API UP3HUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void BindCharacterStat(UP3StatComponent* NewStat);
+	void BindCharacterStat(UP3StatComponent* NewStatComponent);
+	void BindCharacterBuff(UP3BuffComponent* NewBuffComponent);
 
 	void InitHUDWidget(FString NewSkill1Name, FString NewSkill2Name);
 
@@ -34,8 +38,16 @@ protected:
 	void UpdateHUDWidget_MP();
 	void UpdateHUDWidget_Exp();
 
+	void AddBuff(UP3Buff* AddedBuff);
+	void DeleteBuff(UP3Buff* DeletedBuff);
+
 private:
-	TWeakObjectPtr<UP3StatComponent> CurrentStat = nullptr;
+	TWeakObjectPtr<UP3StatComponent> CurrentStatComponent = nullptr;
+
+	TWeakObjectPtr<UP3BuffComponent> CurrentBuffComponent = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+		UP3BuffArrayWidget* UI_BuffArray;
 
 	UPROPERTY(meta = (BindWidget))
 		UProgressBar* ProgressBar_HP;

@@ -67,6 +67,7 @@ void AP3Character::BeginPlay()
 		}
 
 		HeroController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
+		HeroController->GetHUDWidget()->BindCharacterBuff(GetBuffComponent());
 	}
 	
 	AP3Weapon* CurrentWeapon = GetWeaponComponent()->SpawnBasicSword();

@@ -35,6 +35,7 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 		float TotalHealAmount = dynamic_cast<UP3Heal*>(NewBuff)->GetTotalHealAmount();
 		UParticleSystem* Particle = NewBuff->GetParticle();
 		OnHealBuffStarted.Broadcast(Duration, TotalHealAmount, Particle);
+		OnBuffStarted.Broadcast(NewBuff);
 		FTimerHandle DeleteBuffTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {
 			DeleteBuff(NewBuff);
@@ -49,6 +50,7 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 void UP3BuffComponent::DeleteBuff(UP3Buff* DeletedBuff)
 {
 	Buffs.Remove(DeletedBuff);
+	OnBuffFinished.Broadcast(DeletedBuff);
 }
 
 void UP3BuffComponent::BeginPlay()

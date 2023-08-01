@@ -4,6 +4,12 @@
 
 UP3Heal::UP3Heal()
 {
+	static ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE_HEAL(TEXT("/Game/GameData/Images/Image_Heal.Image_Heal"));
+	if (IMAGE_HEAL.Succeeded())
+	{
+		Image = IMAGE_HEAL.Object;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_HEAL(TEXT("/Game/InfinityBladeEffects/Effects/FX_Ability/Heal/P_Health_Pickup_01.P_Health_Pickup_01"));
 	if (P_HEAL.Succeeded())
 	{

@@ -1,17 +1,29 @@
 #include "P3HUDWidget.h"
 #include "P3StatComponent.h"
+#include "P3BuffComponent.h"
+#include "P3BuffArrayWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
-void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStat)
+void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStatComponent)
 {
-	if (NewStat != nullptr)
+	if (NewStatComponent != nullptr)
 	{
-		CurrentStat = NewStat;
-		NewStat->OnHPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_HP);
-		NewStat->OnMPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_MP);
-		NewStat->OnExpChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_Exp);
+		CurrentStatComponent = NewStatComponent;
+		NewStatComponent->OnHPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_HP);
+		NewStatComponent->OnMPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_MP);
+		NewStatComponent->OnExpChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_Exp);
+	}
+}
+
+void UP3HUDWidget::BindCharacterBuff(UP3BuffComponent* NewBuffComponent)
+{
+	if (NewBuffComponent != nullptr)
+	{
+		CurrentBuffComponent = NewBuffComponent;
+		CurrentBuffComponent->OnBuffStarted.AddUObject(this, &UP3HUDWidget::AddBuff);
+		CurrentBuffComponent->OnBuffFinished.AddUObject(this, &UP3HUDWidget::DeleteBuff);
 	}
 }
 
@@ -86,13 +98,13 @@ void UP3HUDWidget::EndUpdateButtonSkill2()
 
 void UP3HUDWidget::UpdateHUDWidget_HP()
 {
-	if (CurrentStat.IsValid())
+	if (CurrentStatComponent.IsValid())
 	{
 		if (ProgressBar_HP != nullptr)
 		{
-			ProgressBar_HP->SetPercent(CurrentStat->GetHPRatio());
-			Text_CurrentHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetCurrentHP()))));
-			Text_MaxHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetMaxHP()))));
+			ProgressBar_HP->SetPercent(CurrentStatComponent->GetHPRatio());
+			Text_CurrentHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetCurrentHP()))));
+			Text_MaxHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetMaxHP()))));
 		}
 		else
 		{
@@ -107,13 +119,13 @@ void UP3HUDWidget::UpdateHUDWidget_HP()
 
 void UP3HUDWidget::UpdateHUDWidget_MP()
 {
-	if (CurrentStat.IsValid())
+	if (CurrentStatComponent.IsValid())
 	{
 		if (ProgressBar_MP != nullptr)
 		{
-			ProgressBar_MP->SetPercent(CurrentStat->GetMPRatio());
-			Text_CurrentMP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetCurrentMP()))));
-			Text_MaxMP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetMaxMP()))));
+			ProgressBar_MP->SetPercent(CurrentStatComponent->GetMPRatio());
+			Text_CurrentMP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetCurrentMP()))));
+			Text_MaxMP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetMaxMP()))));
 		}
 		else
 		{
@@ -128,13 +140,13 @@ void UP3HUDWidget::UpdateHUDWidget_MP()
 
 void UP3HUDWidget::UpdateHUDWidget_Exp()
 {
-	if (CurrentStat.IsValid())
+	if (CurrentStatComponent.IsValid())
 	{
 		if (ProgressBar_Exp != nullptr)
 		{
-			ProgressBar_Exp->SetPercent(CurrentStat->GetExpRatio());
-			Text_CurrentExp->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetCurrentExp()))));
-			Text_RequiredExp->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStat->GetRequiredExp()))));
+			ProgressBar_Exp->SetPercent(CurrentStatComponent->GetExpRatio());
+			Text_CurrentExp->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetCurrentExp()))));
+			Text_RequiredExp->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetRequiredExp()))));
 		}
 		else
 		{
@@ -145,4 +157,14 @@ void UP3HUDWidget::UpdateHUDWidget_Exp()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3HUDWidget] HUDWidget isn't binding with Stat."));
 	}
+}
+
+void UP3HUDWidget::AddBuff(UP3Buff* AddedBuff)
+{
+	UI_BuffArray->AddBuff(AddedBuff);
+}
+
+void UP3HUDWidget::DeleteBuff(UP3Buff* DeletedBuff)
+{
+	UI_BuffArray->DeleteBuff(DeletedBuff);
 }

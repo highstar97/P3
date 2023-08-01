@@ -4,9 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "P3BuffComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHealBuffStartedDelegate, float, float, UParticleSystem*);
-
 class UP3Buff;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffStartedDelegate, UP3Buff*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffFinishedDelegate, UP3Buff*);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHealBuffStartedDelegate, float, float, UParticleSystem*);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3BuffComponent : public UActorComponent
@@ -20,6 +22,8 @@ public:
 
 	void DeleteBuff(UP3Buff* DeletedBuff);
 
+	FOnBuffStartedDelegate OnBuffStarted;
+	FOnBuffFinishedDelegate OnBuffFinished;
 	FOnHealBuffStartedDelegate OnHealBuffStarted;
 
 protected:

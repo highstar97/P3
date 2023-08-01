@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "P3Buff.generated.h"
 
+class UTexture2D;
 class UParticleSystem;
 
 UENUM(BlueprintType)
@@ -25,6 +26,7 @@ public:
 
 	FString GetName() const { return Name; }
 	float GetDuration() const { return Duration; }
+	UTexture2D* GetImage() const { return Image; }
 	UParticleSystem* GetParticle() const { return Particle; }
 	EBuffType GetBuffType() const { return BuffType; }
 
@@ -34,6 +36,9 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
 		float Duration;
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
+		UTexture2D* Image;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
 		UParticleSystem* Particle;
