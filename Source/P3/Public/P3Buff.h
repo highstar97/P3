@@ -4,6 +4,8 @@
 #include "UObject/NoExportTypes.h"
 #include "P3Buff.generated.h"
 
+class UParticleSystem;
+
 UENUM(BlueprintType)
 enum class EBuffType : uint8
 {
@@ -23,6 +25,7 @@ public:
 
 	FString GetName() const { return Name; }
 	float GetDuration() const { return Duration; }
+	UParticleSystem* GetParticle() const { return Particle; }
 	EBuffType GetBuffType() const { return BuffType; }
 
 protected:
@@ -31,6 +34,9 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
 		float Duration;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
+		UParticleSystem* Particle;
 
 	EBuffType BuffType;
 };

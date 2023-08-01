@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "P3BuffComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealBuffStartedDelegate, float, float);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHealBuffStartedDelegate, float, float, UParticleSystem*);
 
 class UP3Buff;
 

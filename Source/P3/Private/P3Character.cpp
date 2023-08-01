@@ -228,7 +228,7 @@ void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
 }
 
-void AP3Character::Heal(float Duration, float TotalHealAmount)
+void AP3Character::Heal(float Duration, float TotalHealAmount, UParticleSystem* NewParticle)
 {
 	if (Duration == 0.0f)
 	{
@@ -238,12 +238,15 @@ void AP3Character::Heal(float Duration, float TotalHealAmount)
 	{
 		float RemainingTime = Duration;
 		float HealPerSecond = TotalHealAmount / Duration;
+		FName RootSocket(TEXT("Root"));
+		UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
 		GetStatComponent()->TakeDamage(-1 * HealPerSecond);	// To heal immediately when the skill starts.
 		FTimerHandle HealTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, [this, RemainingTime, HealPerSecond, HealTimerHandle]()mutable -> void
+		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, [this, RemainingTime, HealPerSecond, RootSocket, NewParticle, HealTimerHandle]()mutable -> void
 			{
 				if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
 				{
+					UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
 					GetStatComponent()->TakeDamage(-1 * HealPerSecond);
 				}
 				else
