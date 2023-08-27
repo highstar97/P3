@@ -8,6 +8,7 @@
 #include "P3GameInstance.h"
 #include "P3HUDWidget.h"
 #include "P3HPBarWidget.h"
+#include "P3DamageNumberWidget.h"
 #include "P3Weapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -36,22 +37,28 @@ AP3Character::AP3Character()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
+	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
+	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
+	SkillComponent = CreateDefaultSubobject<UP3SkillComponent>(TEXT("SkillComponent"));
+	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
+	BuffComponent = CreateDefaultSubobject<UP3BuffComponent>(TEXT("BuffComponent"));
+
 	HPBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HPBarWidgetComponent->SetupAttachment(RootComponent);
 	HPBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	HPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 110.0f));
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HPBAR(TEXT("/Game/Blueprints/UI/UI_HPBar.UI_HPBar_C"));
+	static ConstructorHelpers::FClassFinder<UP3HPBarWidget> UI_HPBAR(TEXT("/Game/Blueprints/UI/UI_HPBar.UI_HPBar_C"));
 	if (UI_HPBAR.Succeeded())
 	{
 		HPBarWidgetComponent->SetWidgetClass(UI_HPBAR.Class);
 		HPBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 30.0f));
 	}
 
-	StatComponent = CreateDefaultSubobject<UP3StatComponent>(TEXT("StatComponent"));
-	StateComponent = CreateDefaultSubobject<UP3StateComponent>(TEXT("StateComponent"));
-	SkillComponent = CreateDefaultSubobject<UP3SkillComponent>(TEXT("SkillComponent"));
-	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
-	BuffComponent = CreateDefaultSubobject<UP3BuffComponent>(TEXT("BuffComponent"));
+	static ConstructorHelpers::FClassFinder<UP3DamageNumberWidget> UI_DAMAGENUMBER(TEXT("/Game/Blueprints/UI/UI_DamageNumber.UI_DamageNumber_C"));
+	if (UI_DAMAGENUMBER.Succeeded())
+	{
+		DamageNumberWidgetClass = UI_DAMAGENUMBER.Class;
+	}
 
 	SetCharacterType(ECharacterType::None);
 }
@@ -223,6 +230,26 @@ void AP3Character::Look(const FInputActionValue& Value)
 	}
 }
 
+void AP3Character::ShowDamageNumber(const float NewDamageNumber)
+{
+	if (GetWorld())
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PlayerController)
+		{
+			UP3DamageNumberWidget* DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(PlayerController, DamageNumberWidgetClass);
+			if (DamageNumberWidget)
+			{
+				FVector2D WidgetPosition;
+				UGameplayStatics::ProjectWorldToScreen(PlayerController, GetActorLocation(), WidgetPosition);
+				DamageNumberWidget->SetPositionInViewport(WidgetPosition);
+				DamageNumberWidget->SetDamageNumber(NewDamageNumber);
+				DamageNumberWidget->AddToViewport();
+			}
+		}
+	}
+}
+
 void AP3Character::DeleteTimer(FTimerHandle DeleteTimer)
 {
 	GetWorld()->GetTimerManager().ClearTimer(DeleteTimer);
@@ -297,6 +324,8 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 	// Damage logic : Damage = Attack (when defense stat update? will changed?)
 	float FinalDamage = InitialDamage;	
 	GetStatComponent()->TakeDamage(FinalDamage);
+
+	ShowDamageNumber(FinalDamage);
 
 	// Exp Logic
 	if (GetStateComponent()->GetbIsDead())

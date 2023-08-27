@@ -15,9 +15,9 @@ class UP3StateComponent;
 class UP3SkillComponent;
 class UP3WeaponComponent;
 class UP3BuffComponent;
+class UP3DamageNumberWidget;
 class UInputMappingContext;
 class UInputAction;
-class UP3StatComponent;
 
 UENUM(BlueprintType)
 enum class ECharacterType : uint8
@@ -65,6 +65,8 @@ protected:
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	
+	void ShowDamageNumber(const float NewDamageNumber);
 
 	void DeleteTimer(FTimerHandle DeleteTimer);
 
@@ -96,6 +98,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		UWidgetComponent* HPBarWidgetComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<UP3DamageNumberWidget> DamageNumberWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		UInputMappingContext* DefaultMappingContext;
