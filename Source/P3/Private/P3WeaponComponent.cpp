@@ -1,22 +1,22 @@
 #include "P3WeaponComponent.h"
 #include "P3Character.h"
 #include "P3Weapon.h"
+#include "P3BasicSword.h"
 
 UP3WeaponComponent::UP3WeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	static ConstructorHelpers::FClassFinder<AP3Weapon> BP_BASIC_SWORD(TEXT("/Game/Blueprints/Weapon_BasicSword.Weapon_BasicSword_C"));
-	if (BP_BASIC_SWORD.Succeeded())
-	{
-		WeaponClass = BP_BASIC_SWORD.Class;
-	}
 }
 
 AP3Weapon* UP3WeaponComponent::SpawnBasicSword()
 {
-	AP3Weapon* SpawnedWeapon = GetWorld()->SpawnActor<AP3Weapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator);
-	return SpawnedWeapon;
+	AP3Weapon* BasicSword = GetWorld()->SpawnActor<AP3BasicSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (BasicSword == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3WeaponComponent] Can't Spawn BasicSword."));
+		return nullptr;
+	}
+	return BasicSword;
 }
 
 void UP3WeaponComponent::EquipWeapon(AP3Weapon* NewWeapon)

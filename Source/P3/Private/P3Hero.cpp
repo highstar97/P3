@@ -58,6 +58,11 @@ void AP3Hero::InitStat()
 	}
 }
 
+void AP3Hero::InitWeapon()
+{
+	Super::InitWeapon();
+}
+
 void AP3Hero::InitSkill()
 {
 	Super::InitSkill();

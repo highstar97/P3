@@ -69,12 +69,6 @@ void AP3Character::BeginPlay()
 		HeroController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
 		HeroController->GetHUDWidget()->BindCharacterBuff(GetBuffComponent());
 	}
-	
-	AP3Weapon* CurrentWeapon = GetWeaponComponent()->SpawnBasicSword();
-	if (CurrentWeapon != nullptr)
-	{
-		GetWeaponComponent()->EquipWeapon(CurrentWeapon);
-	}
 
 	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
 	if (HPBarWidget != nullptr)
@@ -87,6 +81,7 @@ void AP3Character::BeginPlay()
 	}
 	
 	InitStat();
+	InitWeapon();
 	InitSkill();
 }
 
@@ -128,6 +123,15 @@ void AP3Character::StopJumping()
 void AP3Character::InitStat()
 {
 	
+}
+
+void AP3Character::InitWeapon()
+{
+	AP3Weapon* BasicSword = GetWeaponComponent()->SpawnBasicSword();
+	if (BasicSword != nullptr)
+	{
+		GetWeaponComponent()->EquipWeapon(BasicSword);
+	}
 }
 
 void AP3Character::InitSkill()

@@ -38,6 +38,11 @@ void AP3Enemy::InitStat()
 	}
 }
 
+void AP3Enemy::InitWeapon()
+{
+	Super::InitWeapon();
+}
+
 void AP3Enemy::InitSkill()
 {
 	Super::InitSkill();

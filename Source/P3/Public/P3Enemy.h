@@ -15,6 +15,7 @@ public:
 	AP3Enemy();
 
 	virtual void InitStat() override;
+	virtual void InitWeapon() override;
 	virtual void InitSkill() override;
 	UFUNCTION(BlueprintCallable)
 		virtual void Attack() override;

@@ -52,6 +52,7 @@ protected:
 	virtual void StopJumping() override;
 	
 	virtual void InitStat();
+	virtual void InitWeapon();
 	virtual void InitSkill();
 
 	virtual void Attack();
