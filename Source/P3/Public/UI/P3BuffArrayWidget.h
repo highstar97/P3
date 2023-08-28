@@ -14,7 +14,7 @@ class P3_API UP3BuffArrayWidget : public UUserWidget
 	
 public:
 	void AddBuff(UP3Buff* AddedBuff);
-	void DeleteBuff(UP3Buff* DeletedBuff);
+	void RemoveBuff(UP3Buff* RemovedBuff);
 
 private:
 	UPROPERTY(meta = (BindWidget))

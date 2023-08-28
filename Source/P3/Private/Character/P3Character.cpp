@@ -15,6 +15,7 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
@@ -58,6 +59,48 @@ AP3Character::AP3Character()
 	if (UI_DAMAGENUMBER.Succeeded())
 	{
 		DamageNumberWidgetClass = UI_DAMAGENUMBER.Class;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT(TEXT("/Game/Input/IMC_Default.IMC_Default"));
+	if (IMC_DEFAULT.Succeeded())
+	{
+		DefaultMappingContext = IMC_DEFAULT.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_JUMP(TEXT("/Game/Input/Actions/IA_Jump.IA_Jump"));
+	if (IA_JUMP.Succeeded())
+	{
+		JumpAction = IA_JUMP.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MOVE(TEXT("/Game/Input/Actions/IA_Move.IA_Move"));
+	if (IA_MOVE.Succeeded())
+	{
+		MoveAction = IA_MOVE.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LOOK(TEXT("/Game/Input/Actions/IA_Look.IA_Look"));
+	if (IA_LOOK.Succeeded())
+	{
+		LookAction = IA_LOOK.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_ATTACK(TEXT("/Game/Input/Actions/IA_Attack.IA_Attack"));
+	if (IA_ATTACK.Succeeded())
+	{
+		AttackAction= IA_ATTACK.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_SKILL1(TEXT("/Game/Input/Actions/IA_Skill1.IA_Skill1"));
+	if (IA_SKILL1.Succeeded())
+	{
+		Skill1Action = IA_SKILL1.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_SKILL2(TEXT("/Game/Input/Actions/IA_Skill2.IA_Skill2"));
+	if (IA_SKILL2.Succeeded())
+	{
+		Skill2Action = IA_SKILL2.Object;
 	}
 
 	SetCharacterType(ECharacterType::None);

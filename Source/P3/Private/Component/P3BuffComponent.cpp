@@ -16,7 +16,7 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 	{
 		if (Buff == NewBuff)
 		{
-			DeleteBuff(Buff);
+			RemoveBuff(Buff);
 			break;
 		}
 	}
@@ -38,7 +38,7 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 		OnBuffStarted.Broadcast(NewBuff);
 		FTimerHandle DeleteBuffTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {
-			DeleteBuff(NewBuff);
+			RemoveBuff(NewBuff);
 			}), Duration, false);
 		break;
 	}
@@ -47,10 +47,10 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 	}
 }
 
-void UP3BuffComponent::DeleteBuff(UP3Buff* DeletedBuff)
+void UP3BuffComponent::RemoveBuff(UP3Buff* RemovedBuff)
 {
-	Buffs.Remove(DeletedBuff);
-	OnBuffFinished.Broadcast(DeletedBuff);
+	Buffs.Remove(RemovedBuff);
+	OnBuffFinished.Broadcast(RemovedBuff);
 }
 
 void UP3BuffComponent::BeginPlay()

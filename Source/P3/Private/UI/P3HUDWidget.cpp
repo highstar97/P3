@@ -23,7 +23,7 @@ void UP3HUDWidget::BindCharacterBuff(UP3BuffComponent* NewBuffComponent)
 	{
 		CurrentBuffComponent = NewBuffComponent;
 		CurrentBuffComponent->OnBuffStarted.AddUObject(this, &UP3HUDWidget::AddBuff);
-		CurrentBuffComponent->OnBuffFinished.AddUObject(this, &UP3HUDWidget::DeleteBuff);
+		CurrentBuffComponent->OnBuffFinished.AddUObject(this, &UP3HUDWidget::RemoveBuff);
 	}
 }
 
@@ -164,7 +164,7 @@ void UP3HUDWidget::AddBuff(UP3Buff* AddedBuff)
 	UI_BuffArray->AddBuff(AddedBuff);
 }
 
-void UP3HUDWidget::DeleteBuff(UP3Buff* DeletedBuff)
+void UP3HUDWidget::RemoveBuff(UP3Buff* RemovedBuff)
 {
-	UI_BuffArray->DeleteBuff(DeletedBuff);
+	UI_BuffArray->RemoveBuff(RemovedBuff);
 }

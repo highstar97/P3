@@ -15,6 +15,7 @@ public class P3 : ModuleRules
         PrivateIncludePaths.Add("P3/Public/Character/AnimInstance");
         PrivateIncludePaths.Add("P3/Public/Character/Controller");
         PrivateIncludePaths.Add("P3/Public/Component");
+        PrivateIncludePaths.Add("P3/Public/Item");
         PrivateIncludePaths.Add("P3/Public/UI");
         PrivateIncludePaths.Add("P3/Public/Weapon");
     }

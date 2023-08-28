@@ -7,7 +7,7 @@ void UP3BuffArrayWidget::AddBuff(UP3Buff* AddedBuff)
 	Tile_Buffs->AddItem(AddedBuff);
 }
 
-void UP3BuffArrayWidget::DeleteBuff(UP3Buff* DeletedBuff)
+void UP3BuffArrayWidget::RemoveBuff(UP3Buff* RemovedBuff)
 {
-	Tile_Buffs->RemoveItem(DeletedBuff);
+	Tile_Buffs->RemoveItem(RemovedBuff);
 }

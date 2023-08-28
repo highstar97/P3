@@ -39,7 +39,7 @@ protected:
 	void UpdateHUDWidget_Exp();
 
 	void AddBuff(UP3Buff* AddedBuff);
-	void DeleteBuff(UP3Buff* DeletedBuff);
+	void RemoveBuff(UP3Buff* RemovedBuff);
 
 private:
 	TWeakObjectPtr<UP3StatComponent> CurrentStatComponent = nullptr;

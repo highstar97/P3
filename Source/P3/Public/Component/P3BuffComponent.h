@@ -20,7 +20,7 @@ public:
 
 	void ApplyBuff(UP3Buff* NewBuff);
 
-	void DeleteBuff(UP3Buff* DeletedBuff);
+	void RemoveBuff(UP3Buff* RemovedBuff);
 
 	FOnBuffStartedDelegate OnBuffStarted;
 	FOnBuffFinishedDelegate OnBuffFinished;

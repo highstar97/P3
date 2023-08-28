@@ -11,7 +11,7 @@ UENUM(BlueprintType)
 enum class EBuffType : uint8
 {
 	None	UMETA(DisplayName = "None"),
-	Heal	UMETA(DisplayName = "Hero"),
+	Heal	UMETA(DisplayName = "Heal"),
 	//Speed	UMETA(DisplayName = "Enemy")
 };
 
