@@ -2,13 +2,16 @@
 #include "P3HeroController.h"
 #include "P3HeroAnimInstance.h"
 #include "P3GameInstance.h"
+#include "P3ItemManager.h"
 #include "P3StatComponent.h"
 #include "P3StateComponent.h"
 #include "P3SkillComponent.h"
+#include "P3InventoryComponent.h"
 #include "P3WeaponComponent.h"
 #include "P3BuffComponent.h"
 #include "P3Buff.h"
 #include "P3Heal.h"
+#include "P3Item.h"
 #include "P3HUDWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -81,6 +84,15 @@ void AP3Hero::InitSkill()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] GameInstance is NULL."))
 	}
+}
+
+void AP3Hero::InitItem()
+{
+	Super::InitItem();
+	UP3GameInstance* GameInstance = Cast<UP3GameInstance>(GetGameInstance());
+	UP3ItemManager* ItemManager = GameInstance->GetItemManager();
+	GetInventoryComponent()->AddItem(ItemManager->GetItemByKey(1), 3);
+	GetInventoryComponent()->AddItem(ItemManager->GetItemByKey(2), 3);
 }
 
 void AP3Hero::Attack()

@@ -1,7 +1,9 @@
 #include "P3Enemy.h"
 #include "P3EnemyAnimInstance.h"
 #include "P3GameInstance.h"
+#include "P3ItemManager.h"
 #include "P3StatComponent.h"
+#include "P3InventoryComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -46,6 +48,15 @@ void AP3Enemy::InitWeapon()
 void AP3Enemy::InitSkill()
 {
 	Super::InitSkill();
+}
+
+void AP3Enemy::InitItem()
+{
+	Super::InitItem();
+	UP3GameInstance* GameInstance = Cast<UP3GameInstance>(GetGameInstance());
+	UP3ItemManager* ItemManager = GameInstance->GetItemManager();
+	GetInventoryComponent()->AddItem(ItemManager->GetItemByKey(1), 10);
+	GetInventoryComponent()->AddItem(ItemManager->GetItemByKey(2), 10);
 }
 
 void AP3Enemy::Attack()

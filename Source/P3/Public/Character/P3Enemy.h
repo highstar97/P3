@@ -17,6 +17,7 @@ public:
 	virtual void InitStat() override;
 	virtual void InitWeapon() override;
 	virtual void InitSkill() override;
+	virtual void InitItem() override;
 	UFUNCTION(BlueprintCallable)
 		virtual void Attack() override;
 	virtual void Skill1() override;

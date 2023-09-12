@@ -24,6 +24,7 @@ public:
 	void OpenInventory();
 
 	UP3HUDWidget* GetHUDWidget() const { return HUDWidget; }
+	UP3InventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 
 protected:
 	virtual void SetupInputComponent() override;

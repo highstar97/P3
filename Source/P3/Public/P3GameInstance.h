@@ -3,9 +3,11 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
+#include "P3Item.h"
 #include "P3GameInstance.generated.h"
 
 class UDataTable;
+class UP3ItemManager;
 
 // FP3CharacterData is used for Hero, but since it serves as the parent of Enemy, Character name is used instead of Hero to clarify the inheritance structure.
 USTRUCT(BlueprintType)
@@ -65,6 +67,28 @@ public:
 		float CoolTime;
 };
 
+USTRUCT(BlueprintType)
+struct FP3ItemData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FP3ItemData() : Key(0), Name(""), Path(""), Type(EItemType::NONE) {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		int32 Key;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		FString Path;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+		EItemType Type;
+};
+
 UCLASS()
 class P3_API UP3GameInstance : public UGameInstance
 {
@@ -79,6 +103,10 @@ public:
 	FP3EnemyData* GetP3EnemyData(int32 FromLevel);
 	FP3SkillData* GetHeroSkill1Data(int32 FromLevel);
 	FP3SkillData* GetHeroSkill2Data(int32 FromLevel);
+	FP3ItemData* GetP3ItemData(int32 KeyOfItem);
+	UP3ItemManager* GetItemManager();
+
+	int32 GetNumOfP3ItemDataTable() { return P3ItemDataTable->GetRowMap().Num(); }
 
 private:
 	UPROPERTY()
@@ -92,4 +120,10 @@ private:
 
 	UPROPERTY()
 		UDataTable* HeroSkill2DataTable;
+
+	UPROPERTY()
+		UDataTable* P3ItemDataTable;
+
+	UPROPERTY()
+		UP3ItemManager* ItemManager;
 };

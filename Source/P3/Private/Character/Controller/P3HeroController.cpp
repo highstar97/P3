@@ -64,7 +64,6 @@ void AP3HeroController::BeginPlay()
 	if (InventoryWidgetClass != nullptr)
 	{
 		InventoryWidget = CreateWidget<UP3InventoryWidget>(this, InventoryWidgetClass);
-		// InventoryWidget->Update();
 	}
 	else
 	{

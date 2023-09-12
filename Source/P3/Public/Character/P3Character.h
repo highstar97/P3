@@ -15,9 +15,11 @@ class UP3StateComponent;
 class UP3SkillComponent;
 class UP3WeaponComponent;
 class UP3BuffComponent;
+class UP3InventoryComponent;
 class UP3DamageNumberWidget;
 class UInputMappingContext;
 class UInputAction;
+class UP3Item;
 
 UENUM(BlueprintType)
 enum class ECharacterType : uint8
@@ -40,6 +42,7 @@ public:
 	UP3SkillComponent* GetSkillComponent() const { return SkillComponent; }
 	UP3WeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 	UP3BuffComponent* GetBuffComponent() const { return BuffComponent; }
+	UP3InventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 
 	ECharacterType GetCharacterType() const { return CharacterType; }
 	void SetCharacterType(ECharacterType _CharacterType) { CharacterType = _CharacterType; }
@@ -54,6 +57,7 @@ protected:
 	virtual void InitStat();
 	virtual void InitWeapon();
 	virtual void InitSkill();
+	virtual void InitItem();
 
 	virtual void Attack();
 	virtual void Skill1();
@@ -66,19 +70,22 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
-	void ShowDamageNumber(const float NewDamageNumber);
+	void ShowDamageNumber(float NewDamageNumber);
 
 	void DeleteTimer(FTimerHandle DeleteTimer);
 
 	UFUNCTION(BlueprintCallable)
-		void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
+	void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
 
 	void Heal(float Duration, float TotalHealAmount, UParticleSystem* NewParticle);
 
 	bool ConsumeMP(float UsedMP);
 
 	UFUNCTION(BlueprintCallable)
-		float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
+	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
+
+	void AddItem(UP3Item* AddedItem);
+	TArray<UP3Item*> DropItem();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
@@ -95,6 +102,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
 		UP3BuffComponent* BuffComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
+		UP3InventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		UWidgetComponent* HPBarWidgetComponent;

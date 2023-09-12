@@ -5,11 +5,14 @@
 #include "P3SkillComponent.h"
 #include "P3WeaponComponent.h"
 #include "P3BuffComponent.h"
+#include "P3InventoryComponent.h"
 #include "P3GameInstance.h"
 #include "P3HUDWidget.h"
+#include "P3InventoryWidget.h"
 #include "P3HPBarWidget.h"
 #include "P3DamageNumberWidget.h"
 #include "P3Weapon.h"
+#include "P3Item.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
@@ -43,6 +46,7 @@ AP3Character::AP3Character()
 	SkillComponent = CreateDefaultSubobject<UP3SkillComponent>(TEXT("SkillComponent"));
 	WeaponComponent = CreateDefaultSubobject<UP3WeaponComponent>(TEXT("WeaponComponent"));
 	BuffComponent = CreateDefaultSubobject<UP3BuffComponent>(TEXT("BuffComponent"));
+	InventoryComponent = CreateDefaultSubobject<UP3InventoryComponent>(TEXT("InventoryComponent"));
 
 	HPBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HPBarWidgetComponent->SetupAttachment(RootComponent);
@@ -118,6 +122,7 @@ void AP3Character::BeginPlay()
 
 		HeroController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
 		HeroController->GetHUDWidget()->BindCharacterBuff(GetBuffComponent());
+		HeroController->GetInventoryWidget()->BindInventory(GetInventoryComponent());
 	}
 
 	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
@@ -133,6 +138,7 @@ void AP3Character::BeginPlay()
 	InitStat();
 	InitWeapon();
 	InitSkill();
+	InitItem();
 }
 
 void AP3Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -185,6 +191,11 @@ void AP3Character::InitWeapon()
 }
 
 void AP3Character::InitSkill()
+{
+
+}
+
+void AP3Character::InitItem()
 {
 
 }
@@ -273,13 +284,14 @@ void AP3Character::Look(const FInputActionValue& Value)
 	}
 }
 
-void AP3Character::ShowDamageNumber(const float NewDamageNumber)
+void AP3Character::ShowDamageNumber(float NewDamageNumber)
 {
 	if (GetWorld())
 	{
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		if (PlayerController)
 		{
+			// À§Á¬ Ç®¸µ °í¹Î
 			UP3DamageNumberWidget* DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(PlayerController, DamageNumberWidgetClass);
 			if (DamageNumberWidget)
 			{
@@ -384,9 +396,26 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 					float DroppedExp = P3GameInstance->GetP3EnemyData(this->GetStatComponent()->GetLevel())->DropExp;
 					EventInstigatorActor->GetStatComponent()->AddExp(DroppedExp);
 				}
+
+				// Give Dropped Item in this->Inventory to EventInstigatorActor's Inventory.
+				TArray<UP3Item*> DroppedItems = DropItem();
+				for (int32 i = 0; i < DroppedItems.Num(); ++i)
+				{
+					EventInstigatorActor->AddItem(DroppedItems[i]);
+				}
 			}
 		}
 	}
 	
 	return FinalDamage;
+}
+
+void AP3Character::AddItem(UP3Item* AddedItem)
+{
+	GetInventoryComponent()->AddItem(AddedItem);
+}
+
+TArray<UP3Item*> AP3Character::DropItem()
+{
+	return GetInventoryComponent()->RemoveRandomItems();
 }
