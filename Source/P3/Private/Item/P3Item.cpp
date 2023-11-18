@@ -20,21 +20,30 @@ void UP3Item::Use(AP3Character* User)
 
 }
 
-void UP3Item::UpdateItem(UP3GameInstance* GameInstance)
+bool UP3Item::InitItemData(FP3ItemData* ItemDataReference)
 {
-	FP3ItemData* ItemData = GameInstance->GetP3ItemData(this->GetKey());
-	if (ItemData == nullptr)
+	if (ItemDataReference == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Item] : Can't Load ItemData. Check Key."));
-		return;
+		return false;
 	}
 
-	this->SetName(ItemData->Name);
-	ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE(*ItemData->Path);
+	this->SetName(ItemDataReference->Name);
+	ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE(*ItemDataReference->Path);
 	if (IMAGE.Succeeded())
 	{
 		this->SetImage(IMAGE.Object);
 	}
+	this->SetType(ItemDataReference->Type);
+	return true;
+}
 
-	this->SetType(ItemData->Type);
+FP3ItemData* UP3Item::GetItemData(UP3GameInstance* GameInstance)
+{
+	FP3ItemData* ItemData = GameInstance->GetP3ItemData(this->GetKey());
+	if (ItemData == nullptr)
+	{
+		return nullptr;
+	}
+	return ItemData;
 }

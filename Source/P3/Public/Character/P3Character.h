@@ -77,8 +77,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
 
-	void Heal(float Duration, float TotalHealAmount, UParticleSystem* NewParticle);
-	void ManaRegen(float Duration, float TotalManaRegenAmount, UParticleSystem* NewParticle);
+	void HPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle);
+	void MPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle);
 
 	bool ConsumeMP(float UsedMP);
 

@@ -8,8 +8,8 @@ class UP3Buff;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffStartedDelegate, UP3Buff*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffFinishedDelegate, UP3Buff*);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHealBuffStartedDelegate, float, float, UParticleSystem*);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnManaRegenBuffStartedDelegate, float, float, UParticleSystem*);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHPRegenBuffStartedDelegate, float, float, UParticleSystem*);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnMPRegenBuffStartedDelegate, float, float, UParticleSystem*);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3BuffComponent : public UActorComponent
@@ -19,14 +19,20 @@ class P3_API UP3BuffComponent : public UActorComponent
 public:	
 	UP3BuffComponent();
 
-	void ApplyBuff(UP3Buff* NewBuff);
+	void ExecuteHPRegenEffect(UP3Buff* HPRegenBuff);
+	void ExecuteMPRegenEffect(UP3Buff* MPRegenBuff);
 
-	void RemoveBuff(UP3Buff* RemovedBuff);
+	void StartBuffTimer(UP3Buff* Buff);
+
+	bool IsBuffDuplicated(UP3Buff* BuffBeCheckedDuplication);
+	
+	bool ApplyBuff(UP3Buff* NewBuff);
+	bool RemoveBuff(UP3Buff* RemovedBuff);
 
 	FOnBuffStartedDelegate OnBuffStarted;
 	FOnBuffFinishedDelegate OnBuffFinished;
-	FOnHealBuffStartedDelegate OnHealBuffStarted;
-	FOnManaRegenBuffStartedDelegate OnManaRegenBuffStarted;
+	FOnHPRegenBuffStartedDelegate OnHPRegenBuffStarted;
+	FOnMPRegenBuffStartedDelegate OnMPRegenBuffStarted;
 
 protected:
 	virtual void BeginPlay() override;

@@ -10,9 +10,9 @@ class UParticleSystem;
 UENUM(BlueprintType)
 enum class EBuffType : uint8
 {
-	NONE		UMETA(DisplayName = "None"),
-	HEAL		UMETA(DisplayName = "Heal"),
-	MANAREGEN	UMETA(DisplayName = "ManaRegen"),
+	NONE	UMETA(DisplayName = "None"),
+	HPREGEN	UMETA(DisplayName = "HPRegen"),
+	MPREGEN	UMETA(DisplayName = "MPRegen"),
 	//Speed	UMETA(DisplayName = "Enemy")
 };
 

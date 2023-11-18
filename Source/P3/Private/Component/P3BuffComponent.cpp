@@ -1,7 +1,7 @@
 #include "P3BuffComponent.h"
 #include "P3Buff.h"
-#include "P3Heal.h"
-#include "P3ManaRegen.h"
+#include "P3HPRegen.h"
+#include "P3MPRegen.h"
 #include "P3Character.h"
 
 UP3BuffComponent::UP3BuffComponent()
@@ -10,61 +10,92 @@ UP3BuffComponent::UP3BuffComponent()
 	Buffs.Empty();
 }
 
-void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
+/*
+	When On__BuffStarted Broadcast, Character do __.
+*/
+void UP3BuffComponent::ExecuteHPRegenEffect(UP3Buff* HPRegenBuff)
 {
-	// After Checking Same Buff. if Duplicated, Clear past buff and start new buff.
+	float Duration = HPRegenBuff->GetDuration();
+	float TotalAmount = Cast<UP3HPRegen>(HPRegenBuff)->GetTotalAmount();
+	UParticleSystem* Particle = HPRegenBuff->GetParticle();
+
+	OnHPRegenBuffStarted.Broadcast(Duration, TotalAmount, Particle);
+	OnBuffStarted.Broadcast(HPRegenBuff);
+}
+
+void UP3BuffComponent::ExecuteMPRegenEffect(UP3Buff* MPRegenBuff)
+{
+	float Duration = MPRegenBuff->GetDuration();
+	float TotalAmount = Cast<UP3MPRegen>(MPRegenBuff)->GetTotalAmount();
+	UParticleSystem* Particle = MPRegenBuff->GetParticle();
+
+	OnMPRegenBuffStarted.Broadcast(Duration, TotalAmount, Particle);
+	OnBuffStarted.Broadcast(MPRegenBuff);
+}
+
+void UP3BuffComponent::StartBuffTimer(UP3Buff* Buff)
+{
+	FTimerHandle RemoveBuffTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(RemoveBuffTimerHandle, FTimerDelegate::CreateLambda([this, Buff]()->void {
+		RemoveBuff(Buff);
+		}), Buff->GetDuration(), false);
+}
+
+bool UP3BuffComponent::IsBuffDuplicated(UP3Buff* BuffBeCheckedDuplication)
+{
 	for (UP3Buff* Buff : Buffs)
 	{
-		if (Buff == NewBuff)
+		if (Buff->GetName() == BuffBeCheckedDuplication->GetName())
 		{
-			RemoveBuff(Buff);
-			break;
+			return true;
 		}
 	}
+	return false;
+}
+
+bool UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
+{
+	if (IsBuffDuplicated(NewBuff))
+	{
+		// When Buff is Duplicated, Can't Use.
+		return false;
+	}
+
 	Buffs.Emplace(NewBuff);
 
-	// Buff Separation -> Correct Delegate Execution?
 	switch (NewBuff->GetBuffType())
 	{
 	case(EBuffType::NONE):
 	{
 		break;
 	}
-	case(EBuffType::HEAL):
+	case(EBuffType::HPREGEN):
 	{
-		float Duration = NewBuff->GetDuration();
-		float TotalHealAmount = Cast<UP3Heal>(NewBuff)->GetTotalHealAmount();
-		UParticleSystem* Particle = NewBuff->GetParticle();
-		OnHealBuffStarted.Broadcast(Duration, TotalHealAmount, Particle);
-		OnBuffStarted.Broadcast(NewBuff);
-		FTimerHandle DeleteBuffTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {
-			RemoveBuff(NewBuff);
-			}), Duration, false);
+		ExecuteHPRegenEffect(NewBuff);
 		break;
 	}
-	case(EBuffType::MANAREGEN):
+	case(EBuffType::MPREGEN):
 	{
-		float Duration = NewBuff->GetDuration();
-		float TotalManaRegenAmount = Cast<UP3ManaRegen>(NewBuff)->GetTotalManaRegenAmount();
-		UParticleSystem* Particle = NewBuff->GetParticle();
-		OnManaRegenBuffStarted.Broadcast(Duration, TotalManaRegenAmount, Particle);
-		OnBuffStarted.Broadcast(NewBuff);
-		FTimerHandle DeleteBuffTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {
-			RemoveBuff(NewBuff);
-			}), Duration, false);
+		ExecuteMPRegenEffect(NewBuff);
 		break;
 	}
 	default:
+		UE_LOG(LogTemp, Warning, TEXT("[P3BuffComponent] : BuffType is unknown."));
 		break;
 	}
+	StartBuffTimer(NewBuff);
+	return true;
 }
 
-void UP3BuffComponent::RemoveBuff(UP3Buff* RemovedBuff)
+bool UP3BuffComponent::RemoveBuff(UP3Buff* RemovedBuff)
 {
-	Buffs.Remove(RemovedBuff);
-	OnBuffFinished.Broadcast(RemovedBuff);
+	if (Buffs.Find(RemovedBuff) != INDEX_NONE)
+	{
+		Buffs.Remove(RemovedBuff);
+		OnBuffFinished.Broadcast(RemovedBuff);
+		return true;
+	}
+	return false;
 }
 
 void UP3BuffComponent::BeginPlay()

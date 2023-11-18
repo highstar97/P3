@@ -17,10 +17,15 @@ public:
 
     void Init(UP3GameInstance* GameInstance);
 
+    bool CreateHPPotion_Small();
+    bool CreateMPPotion_Small();
+
     UFUNCTION(BlueprintCallable, Category = "Item")
         UP3Item* GetItemByKey(int32 ItemKey);
 
 private:
     UPROPERTY()
         TMap<int32, UP3Item*> ItemMap;
+
+    TWeakObjectPtr<UP3GameInstance> CurrentGameInstance = nullptr;
 };

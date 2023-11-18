@@ -10,7 +10,7 @@
 #include "P3WeaponComponent.h"
 #include "P3BuffComponent.h"
 #include "P3Buff.h"
-#include "P3Heal.h"
+#include "P3HPRegen.h"
 #include "P3Item.h"
 #include "P3HUDWidget.h"
 #include "Camera/CameraComponent.h"
@@ -240,9 +240,9 @@ void AP3Hero::Skill2()
 		}), GetSkillComponent()->GetSkill2CoolTime(), false);
 
 	// Skill2
-	UP3Heal* BuffHeal = NewObject<UP3Heal>();
-	BuffHeal->InitHeal(FString::Printf(TEXT("Skill2's Heal")), 10.0f, 200.0f);
-	GetBuffComponent()->ApplyBuff(BuffHeal);
+	UP3HPRegen* HPRegenBuff = NewObject<UP3HPRegen>();
+	HPRegenBuff->InitBuffData(FString::Printf(TEXT("Skill2's HPRegen")), 10.0f, 200.0f);
+	GetBuffComponent()->ApplyBuff(HPRegenBuff);
 }
 
 void AP3Hero::Die()

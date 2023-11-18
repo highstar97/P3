@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "P3Item.generated.h"
 
+struct FP3ItemData;
 class UP3GameInstance;
 class AP3Character;
 
@@ -40,7 +41,8 @@ public:
 	EItemType GetType() const { return Type; }
 	void SetType(EItemType NewType) { Type = NewType; }
 
-	void UpdateItem(UP3GameInstance* GameInstance);
+	bool InitItemData(FP3ItemData* ItemDataReference);
+	FP3ItemData* GetItemData(UP3GameInstance* GameInstance);
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))

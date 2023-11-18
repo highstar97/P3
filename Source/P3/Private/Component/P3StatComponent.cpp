@@ -37,7 +37,7 @@ void UP3StatComponent::LevelUp()
 
 void UP3StatComponent::ConsumeMP(float UsedMP)
 {
-	CurrentMP -= UsedMP;
+	SetCurrentMP(FMath::Clamp(GetCurrentMP() - UsedMP, 0.0f, GetMaxMP()));
 	OnMPChanged.Broadcast();
 }
 

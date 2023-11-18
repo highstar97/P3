@@ -161,8 +161,8 @@ void AP3Character::PostInitializeComponents()
 	GetStatComponent()->OnHPIsZero.AddUObject(this, &AP3Character::Die);
 	GetStatComponent()->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
 	
-	GetBuffComponent()->OnHealBuffStarted.AddUObject(this, &AP3Character::Heal);
-	GetBuffComponent()->OnManaRegenBuffStarted.AddUObject(this, &AP3Character::ManaRegen);
+	GetBuffComponent()->OnHPRegenBuffStarted.AddUObject(this, &AP3Character::HPRegen);
+	GetBuffComponent()->OnMPRegenBuffStarted.AddUObject(this, &AP3Character::MPRegen);
 }
 
 void AP3Character::Jump()
@@ -316,53 +316,53 @@ void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
 }
 
-void AP3Character::Heal(float Duration, float TotalHealAmount, UParticleSystem* NewParticle)
+void AP3Character::HPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle)
 {
 	if (Duration == 0.0f)
 	{
-		GetStatComponent()->TakeDamage(-1 * TotalHealAmount);
+		GetStatComponent()->TakeDamage(-1 * TotalAmount);
 	}
 	else
 	{
 		float RemainingTime = Duration;
-		float HealPerSecond = TotalHealAmount / Duration;
+		float HPRegenPerSecond = TotalAmount / Duration;
 		FName RootSocket(TEXT("Root"));
 		UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-		GetStatComponent()->TakeDamage(-1 * HealPerSecond);	// To heal immediately when the skill starts.
-		FTimerHandle HealTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, [this, RemainingTime, HealPerSecond, RootSocket, NewParticle, HealTimerHandle]()mutable -> void
+		GetStatComponent()->TakeDamage(-1 * HPRegenPerSecond);	// To HPRegen immediately when the skill starts.
+		FTimerHandle HPRegenTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(HPRegenTimerHandle, [this, RemainingTime, HPRegenPerSecond, RootSocket, NewParticle, HPRegenTimerHandle]()mutable -> void
 			{
 				if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
 				{
 					UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-					GetStatComponent()->TakeDamage(-1 * HealPerSecond);
+					GetStatComponent()->TakeDamage(-1 * HPRegenPerSecond);
 				}
 				else
 				{
-					DeleteTimer(HealTimerHandle);
+					DeleteTimer(HPRegenTimerHandle);
 				}
 			}, 1.0f, true);
 	}
 }
 
-void AP3Character::ManaRegen(float Duration, float TotalManaRegenAmount, UParticleSystem* NewParticle)
+void AP3Character::MPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle)
 {
 	if (Duration == 0.0f)
 	{
-		GetStatComponent()->ConsumeMP(-1 * TotalManaRegenAmount);
+		GetStatComponent()->ConsumeMP(-1 * TotalAmount);
 	}
 	else
 	{
 		float RemainingTime = Duration;
-		float ManaRegenPerSecond = TotalManaRegenAmount / Duration;
+		float MPRegenPerSecond = TotalAmount / Duration;
 		FName RootSocket(TEXT("Root"));
 		if (NewParticle != nullptr)
 		{
 			UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
 		}
-		GetStatComponent()->ConsumeMP(-1 * ManaRegenPerSecond);	// To ManaRegen immediately when the skill starts.
-		FTimerHandle ManaRegenTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(ManaRegenTimerHandle, [this, RemainingTime, ManaRegenPerSecond, RootSocket, NewParticle, ManaRegenTimerHandle]()mutable -> void
+		GetStatComponent()->ConsumeMP(-1 * MPRegenPerSecond);	// To MPRegen immediately when the skill starts.
+		FTimerHandle MPRegenTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(MPRegenTimerHandle, [this, RemainingTime, MPRegenPerSecond, RootSocket, NewParticle, MPRegenTimerHandle]()mutable -> void
 			{
 				if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
 				{
@@ -370,11 +370,11 @@ void AP3Character::ManaRegen(float Duration, float TotalManaRegenAmount, UPartic
 					{
 						UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
 					}
-					GetStatComponent()->ConsumeMP(-1 * ManaRegenPerSecond);
+					GetStatComponent()->ConsumeMP(-1 * MPRegenPerSecond);
 				}
 				else
 				{
-					DeleteTimer(ManaRegenTimerHandle);
+					DeleteTimer(MPRegenTimerHandle);
 				}
 			}, 1.0f, true);
 	}
