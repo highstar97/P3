@@ -18,8 +18,10 @@ public:
 
 	UP3InventoryComponent* GetCurrentInventoryComponent() { return CurrentInventoryComponent.Get(); }
 
-	void AddItem(UP3Item* AddedItem);
-	void RemoveItem(UP3Item* RemovedItem);
+	void AddItem(UP3Item* ItemToAdd);
+	UFUNCTION(BlueprintCallable)
+		void RemoveItem(UP3Item* ItemToRemove);
+	void UpdateItem(UP3Item* ItemToUpdate);
 
 private:
 	TWeakObjectPtr<UP3InventoryComponent> CurrentInventoryComponent = nullptr;

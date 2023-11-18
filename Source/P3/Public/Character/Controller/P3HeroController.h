@@ -21,7 +21,7 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* APawn) override;
 
-	void OpenInventory();
+	void ToggleInventory();
 
 	UP3HUDWidget* GetHUDWidget() const { return HUDWidget; }
 	UP3InventoryWidget* GetInventoryWidget() const { return InventoryWidget; }

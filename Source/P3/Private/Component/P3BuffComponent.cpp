@@ -1,6 +1,7 @@
 #include "P3BuffComponent.h"
 #include "P3Buff.h"
 #include "P3Heal.h"
+#include "P3ManaRegen.h"
 #include "P3Character.h"
 
 UP3BuffComponent::UP3BuffComponent()
@@ -25,16 +26,29 @@ void UP3BuffComponent::ApplyBuff(UP3Buff* NewBuff)
 	// Buff Separation -> Correct Delegate Execution?
 	switch (NewBuff->GetBuffType())
 	{
-	case(EBuffType::None):
+	case(EBuffType::NONE):
 	{
 		break;
 	}
-	case(EBuffType::Heal):
+	case(EBuffType::HEAL):
 	{
 		float Duration = NewBuff->GetDuration();
-		float TotalHealAmount = dynamic_cast<UP3Heal*>(NewBuff)->GetTotalHealAmount();
+		float TotalHealAmount = Cast<UP3Heal>(NewBuff)->GetTotalHealAmount();
 		UParticleSystem* Particle = NewBuff->GetParticle();
 		OnHealBuffStarted.Broadcast(Duration, TotalHealAmount, Particle);
+		OnBuffStarted.Broadcast(NewBuff);
+		FTimerHandle DeleteBuffTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {
+			RemoveBuff(NewBuff);
+			}), Duration, false);
+		break;
+	}
+	case(EBuffType::MANAREGEN):
+	{
+		float Duration = NewBuff->GetDuration();
+		float TotalManaRegenAmount = Cast<UP3ManaRegen>(NewBuff)->GetTotalManaRegenAmount();
+		UParticleSystem* Particle = NewBuff->GetParticle();
+		OnManaRegenBuffStarted.Broadcast(Duration, TotalManaRegenAmount, Particle);
 		OnBuffStarted.Broadcast(NewBuff);
 		FTimerHandle DeleteBuffTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(DeleteBuffTimerHandle, FTimerDelegate::CreateLambda([this, NewBuff]()->void {

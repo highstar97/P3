@@ -4,6 +4,6 @@
 
 void UP3BuffImageWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	UP3Buff* Buff = dynamic_cast<UP3Buff*>(ListItemObject);
+	UP3Buff* Buff = Cast<UP3Buff>(ListItemObject);
 	Image_Buff->SetBrushFromTexture(Buff->GetImage());
 }

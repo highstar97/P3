@@ -64,6 +64,8 @@ void AP3HeroController::BeginPlay()
 	if (InventoryWidgetClass != nullptr)
 	{
 		InventoryWidget = CreateWidget<UP3InventoryWidget>(this, InventoryWidgetClass);
+		InventoryWidget->AddToViewport();
+		InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -81,23 +83,23 @@ void AP3HeroController::OnPossess(APawn* APawn)
 	Super::OnPossess(APawn);
 }
 
-void AP3HeroController::OpenInventory()
+void AP3HeroController::ToggleInventory()
 {
 	// Close Inventory
 	if (InventoryWidget->IsVisible())
 	{
-		SetPause(false);
+		InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		SetInputMode(OnlyGameInputMode);
 		bShowMouseCursor = false;
-		InventoryWidget->RemoveFromParent();
+		SetPause(false);
 	}
 	// Open Inventory
 	else
 	{
-		SetPause(true);
+		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		SetInputMode(GameAndUIInputMode);
 		bShowMouseCursor = true;
-		InventoryWidget->AddToViewport();
+		SetPause(true);
 	}
 }
 
@@ -107,6 +109,6 @@ void AP3HeroController::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Triggered, this, &AP3HeroController::OpenInventory);
+		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Triggered, this, &AP3HeroController::ToggleInventory);
 	}
 }

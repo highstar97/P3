@@ -9,7 +9,7 @@ class P3_API UP3Heal : public UP3Buff
 {
 	GENERATED_BODY()
 	
-public:
+public:	
 	UP3Heal();
 
 	float GetTotalHealAmount() const { return TotalHealAmount; }

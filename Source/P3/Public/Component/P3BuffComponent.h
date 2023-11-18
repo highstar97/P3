@@ -9,6 +9,7 @@ class UP3Buff;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffStartedDelegate, UP3Buff*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffFinishedDelegate, UP3Buff*);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHealBuffStartedDelegate, float, float, UParticleSystem*);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnManaRegenBuffStartedDelegate, float, float, UParticleSystem*);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3BuffComponent : public UActorComponent
@@ -25,6 +26,7 @@ public:
 	FOnBuffStartedDelegate OnBuffStarted;
 	FOnBuffFinishedDelegate OnBuffFinished;
 	FOnHealBuffStartedDelegate OnHealBuffStarted;
+	FOnManaRegenBuffStartedDelegate OnManaRegenBuffStarted;
 
 protected:
 	virtual void BeginPlay() override;

@@ -78,6 +78,7 @@ protected:
 	void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
 
 	void Heal(float Duration, float TotalHealAmount, UParticleSystem* NewParticle);
+	void ManaRegen(float Duration, float TotalManaRegenAmount, UParticleSystem* NewParticle);
 
 	bool ConsumeMP(float UsedMP);
 

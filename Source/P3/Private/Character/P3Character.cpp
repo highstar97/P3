@@ -162,6 +162,7 @@ void AP3Character::PostInitializeComponents()
 	GetStatComponent()->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
 	
 	GetBuffComponent()->OnHealBuffStarted.AddUObject(this, &AP3Character::Heal);
+	GetBuffComponent()->OnManaRegenBuffStarted.AddUObject(this, &AP3Character::ManaRegen);
 }
 
 void AP3Character::Jump()
@@ -339,6 +340,41 @@ void AP3Character::Heal(float Duration, float TotalHealAmount, UParticleSystem* 
 				else
 				{
 					DeleteTimer(HealTimerHandle);
+				}
+			}, 1.0f, true);
+	}
+}
+
+void AP3Character::ManaRegen(float Duration, float TotalManaRegenAmount, UParticleSystem* NewParticle)
+{
+	if (Duration == 0.0f)
+	{
+		GetStatComponent()->ConsumeMP(-1 * TotalManaRegenAmount);
+	}
+	else
+	{
+		float RemainingTime = Duration;
+		float ManaRegenPerSecond = TotalManaRegenAmount / Duration;
+		FName RootSocket(TEXT("Root"));
+		if (NewParticle != nullptr)
+		{
+			UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
+		}
+		GetStatComponent()->ConsumeMP(-1 * ManaRegenPerSecond);	// To ManaRegen immediately when the skill starts.
+		FTimerHandle ManaRegenTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(ManaRegenTimerHandle, [this, RemainingTime, ManaRegenPerSecond, RootSocket, NewParticle, ManaRegenTimerHandle]()mutable -> void
+			{
+				if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
+				{
+					if (NewParticle != nullptr)
+					{
+						UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
+					}
+					GetStatComponent()->ConsumeMP(-1 * ManaRegenPerSecond);
+				}
+				else
+				{
+					DeleteTimer(ManaRegenTimerHandle);
 				}
 			}, 1.0f, true);
 	}

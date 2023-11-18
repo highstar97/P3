@@ -4,6 +4,9 @@
 #include "UObject/NoExportTypes.h"
 #include "P3Item.generated.h"
 
+class UP3GameInstance;
+class AP3Character;
+
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
@@ -13,7 +16,7 @@ enum class EItemType : uint8
 	JUNK		UMETA(DisplayName = "Junk")
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class P3_API UP3Item : public UObject
 {
 	GENERATED_BODY()
@@ -21,6 +24,9 @@ class P3_API UP3Item : public UObject
 public:
 	UP3Item();
 	virtual ~UP3Item();
+	
+	UFUNCTION(BlueprintCallable)
+		virtual void Use(AP3Character* User);
 
 	int32 GetKey() const { return Key; }
 	void SetKey(int32 NewKey) { Key = NewKey; }
@@ -33,6 +39,8 @@ public:
 
 	EItemType GetType() const { return Type; }
 	void SetType(EItemType NewType) { Type = NewType; }
+
+	void UpdateItem(UP3GameInstance* GameInstance);
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))

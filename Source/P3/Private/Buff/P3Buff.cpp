@@ -6,7 +6,7 @@ UP3Buff::UP3Buff()
 	Duration = -1.0f;
 	Image = nullptr;
 	Particle = nullptr;
-	BuffType = EBuffType::None;
+	BuffType = EBuffType::NONE;
 }
 
 UP3Buff::~UP3Buff()

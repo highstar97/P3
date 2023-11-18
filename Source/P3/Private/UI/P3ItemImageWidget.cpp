@@ -6,7 +6,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
-void UP3ItemImageWidget::UpdateTextNumOfItem(UP3Item* Item)
+void UP3ItemImageWidget::SyncItemWithInventory(UP3Item* ItemToSync)
 {
 	AP3HeroController* HeroController = Cast<AP3HeroController>(GetOwningPlayer());
 	if (HeroController == nullptr)
@@ -20,22 +20,28 @@ void UP3ItemImageWidget::UpdateTextNumOfItem(UP3Item* Item)
 		UE_LOG(LogTemp, Warning, TEXT("[P3ItemImageWidget] : Can't Access to InventoryWidget."));
 		return;
 	}
-	FP3ItemInfo* InsertedItemInfo = InventoryWidget->GetCurrentInventoryComponent()->FindItemInfo(Item);
+	FP3ItemInfo* InsertedItemInfo = InventoryWidget->GetCurrentInventoryComponent()->FindItemInfo(ItemToSync);
 	if (InsertedItemInfo == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3ItemImageWidget] : Can't Find Info about AddedItem."));
 		return;
 	}
-	else
-	{
-		Text_NumOfItems->SetText(FText::FromString(FString::FromInt(InsertedItemInfo->Num)));
-	}
+
+	NumOfInsertedItem = InsertedItemInfo->Num;
+	InsertedItem = InsertedItemInfo->Item;
+	Texture2D_Item = InsertedItemInfo->Item->GetImage();
+	Image_Item->SetBrushFromTexture(Texture2D_Item);
+	Text_NumOfItems->SetText(FText::FromString(FString::FromInt(InsertedItemInfo->Num)));
 }
 
 void UP3ItemImageWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 {	
 	check(ListItemObject != nullptr);
 	UP3Item* Item = Cast<UP3Item>(ListItemObject);
-	Image_Item->SetBrushFromTexture(Item->GetImage());
-	UpdateTextNumOfItem(Item);
+	SyncItemWithInventory(Item);
+}
+
+void UP3ItemImageWidget::OnListItemObjectSet(UObject* ListItemObject)
+{
+	check(ListItemObject != nullptr);
 }

@@ -8,62 +8,63 @@ UP3InventoryComponent::UP3InventoryComponent()
 	Inventory.Empty();
 }
 
-void UP3InventoryComponent::AddItem(UP3Item* AddedItem, int32 NumOfItem)
+void UP3InventoryComponent::AddItem(UP3Item* ItemToAdd, int32 NumOfItem)
 {
 	// If there is a unique item that only exists, an if statement must be added.
-	if (AddedItem->GetType() == EItemType::NONE)
+	if (ItemToAdd->GetType() == EItemType::NONE)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3InventoryComponent] : Wrong Item Added."));
 	}
 	else
 	{
-		int32 KeyToFind = AddedItem->GetKey();
-		FP3ItemInfo* FoundElement = Inventory.FindByPredicate([KeyToFind](const FP3ItemInfo& Info) {
-			return Info.Item->GetKey() == KeyToFind;
-			});
+		FP3ItemInfo* FoundElement = FindItemInfo(ItemToAdd);
 
 		if (FoundElement)
 		{
 			FoundElement->Num += NumOfItem;
+			OnItemChanged.Broadcast(ItemToAdd);
 		}
 		else
 		{
 			FP3ItemInfo TempInfo;
-			TempInfo.Item = AddedItem;
+			TempInfo.Item = ItemToAdd;
 			TempInfo.Num = NumOfItem;
 			Inventory.Emplace(TempInfo);
+			OnItemAdded.Broadcast(ItemToAdd);
 		}
-		OnItemAdded.Broadcast(AddedItem);
 	}
 }
 
-UP3Item* UP3InventoryComponent::RemoveItem(UP3Item* RemovedItem)
+UP3Item* UP3InventoryComponent::RemoveItem(UP3Item* ItemToRemove)
 {
-	int32 KeyToFind = RemovedItem->GetKey();
-	FP3ItemInfo* FoundElement = Inventory.FindByPredicate([KeyToFind](const FP3ItemInfo& Info) {
-		return Info.Item->GetKey() == KeyToFind;
-		});
+	FP3ItemInfo* FoundElement = FindItemInfo(ItemToRemove);
 
 	if (FoundElement)
 	{
 		if (FoundElement->Num > 0)
 		{
 			FoundElement->Num -= 1;
-			// When Remove Last Item.
+			// When Remove Last Item. Remove Item on Inventory Widget.
 			if (FoundElement->Num <= 0)
 			{
+				OnItemRemoved.Broadcast(FoundElement->Item);
 				Inventory.RemoveSingle(*FoundElement);
+			}
+			else
+			{
+				OnItemChanged.Broadcast(FoundElement->Item);
 			}
 			return FoundElement->Item;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[P3InventoryComponent] : RemovedItem doesn't exsist."));
+	UE_LOG(LogTemp, Warning, TEXT("[P3InventoryComponent] : ItemToRemove doesn't exsist."));
 	return nullptr;
 }
 
-FP3ItemInfo* UP3InventoryComponent::FindItemInfo(UP3Item* FindItem)
+// Find Item in Inventory.
+FP3ItemInfo* UP3InventoryComponent::FindItemInfo(UP3Item* ItemToFind)
 {
-	int32 KeyToFind = FindItem->GetKey();
+	int32 KeyToFind = ItemToFind->GetKey();
 	FP3ItemInfo* FoundElement = Inventory.FindByPredicate([KeyToFind](const FP3ItemInfo& Info) {
 		return Info.Item->GetKey() == KeyToFind;
 		});

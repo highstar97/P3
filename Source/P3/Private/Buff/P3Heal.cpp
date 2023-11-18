@@ -16,7 +16,7 @@ UP3Heal::UP3Heal()
 		Particle = P_HEAL.Object;
 	}
 
-	BuffType = EBuffType::Heal;
+	BuffType = EBuffType::HEAL;
 }
 
 void UP3Heal::InitHeal(FString NewName, float NewDuration, float NewTotalHealAmount)

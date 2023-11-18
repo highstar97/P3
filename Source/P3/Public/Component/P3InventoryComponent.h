@@ -6,6 +6,8 @@
 #include "P3InventoryComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnItemAddedDelegate, UP3Item*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnItemRemovedDelegate, UP3Item*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnItemChangedDelegate, UP3Item*);
 
 USTRUCT(BlueprintType)
 struct FP3ItemInfo
@@ -40,14 +42,16 @@ class P3_API UP3InventoryComponent : public UActorComponent
 public:
 	UP3InventoryComponent();
 
-	void AddItem(UP3Item* AddedItem, int32 NumOfItem = 1);
-	UP3Item* RemoveItem(UP3Item* RemovedItem);
+	void AddItem(UP3Item* ItemToAdd, int32 NumOfItem = 1);
+	UP3Item* RemoveItem(UP3Item* ItemToRemove);
 
-	FP3ItemInfo* FindItemInfo(UP3Item* FindItem);
+	FP3ItemInfo* FindItemInfo(UP3Item* ItemToFind);
 
 	TArray<UP3Item*> RemoveRandomItems();
 
 	FOnItemAddedDelegate OnItemAdded;
+	FOnItemRemovedDelegate OnItemRemoved;
+	FOnItemChangedDelegate OnItemChanged;
 
 protected:
 	virtual void BeginPlay() override;
