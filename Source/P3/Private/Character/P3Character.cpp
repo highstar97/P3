@@ -218,11 +218,11 @@ void AP3Character::Skill2()
 
 void AP3Character::Die()
 {
-	FTimerHandle DeadTimerHandle = {};
 	GetStateComponent()->SetbIsDead(true);
 	SetActorEnableCollision(false);
 	HPBarWidgetComponent->SetHiddenInGame(true);
 	GetWeaponComponent()->DestroyWeapon();
+	FTimerHandle DeadTimerHandle = {};
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 		Destroy();
 		}), 3.0f, false);
@@ -231,16 +231,14 @@ void AP3Character::Die()
 void AP3Character::LevelUp()
 {
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (P3GameInstance != nullptr)
+	if (P3GameInstance == nullptr)
 	{
-		int32 NextLevel = this->GetStatComponent()->GetLevel() + 1;
-		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3HeroData(NextLevel);
-		GetStatComponent()->SetStatFromDataTable(NextLevel, LevelBasedData);
+		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."));
+		
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Character] GameInstance is NULL."))
-	}
+	int32 NextLevel = this->GetStatComponent()->GetLevel() + 1;
+	FP3CharacterData* LevelBasedData = P3GameInstance->GetP3HeroData(NextLevel);
+	GetStatComponent()->SetStatFromDataTable(NextLevel, LevelBasedData);
 }
 
 void AP3Character::Move(const FInputActionValue& Value)
@@ -287,25 +285,32 @@ void AP3Character::Look(const FInputActionValue& Value)
 
 void AP3Character::ShowDamageNumber(float NewDamageNumber)
 {
-	if (GetWorld())
+	if (!GetWorld())
 	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		if (PlayerController)
-		{
-			// À§Á¬ Ç®¸µ °í¹Î
-			UP3DamageNumberWidget* DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(PlayerController, DamageNumberWidgetClass);
-			if (DamageNumberWidget)
-			{
-				FVector2D WidgetPosition;
-				UGameplayStatics::ProjectWorldToScreen(PlayerController, GetActorLocation(), WidgetPosition);
-				DamageNumberWidget->SetPositionInViewport(WidgetPosition);
-				DamageNumberWidget->SetDamageNumber(NewDamageNumber);
-				DamageNumberWidget->AddToViewport();
-			}
-		}
+		return;
 	}
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	// Thinking about widget (object) pooling.
+	UP3DamageNumberWidget* DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(PlayerController, DamageNumberWidgetClass);
+	if (!DamageNumberWidget)
+	{
+		return;
+	}
+
+	FVector2D WidgetPosition;
+	UGameplayStatics::ProjectWorldToScreen(PlayerController, GetActorLocation(), WidgetPosition);
+	DamageNumberWidget->SetPositionInViewport(WidgetPosition);
+	DamageNumberWidget->SetDamageNumber(NewDamageNumber);
+	DamageNumberWidget->AddToViewport();
 }
 
+// Move to another class (I don't think this function is appropriate for a character class).
 void AP3Character::DeleteTimer(FTimerHandle DeleteTimer)
 {
 	GetWorld()->GetTimerManager().ClearTimer(DeleteTimer);
@@ -413,33 +418,31 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 	}
 
 	// Damage logic : Damage = Attack (when defense stat update? will changed?)
-	float FinalDamage = InitialDamage;	
+	float FinalDamage = InitialDamage;
 	GetStatComponent()->TakeDamage(FinalDamage);
 
 	ShowDamageNumber(FinalDamage);
 
 	// Exp Logic
-	if (GetStateComponent()->GetbIsDead())
+	if (!GetStateComponent()->GetbIsDead() || !EventInstigator->IsPlayerController())
 	{
-		// when Multiplay, Each PlayerController's bIsPlayerController is all true?
-		if (EventInstigator->IsPlayerController())
-		{
-			if (this->GetCharacterType() == ECharacterType::Enemy)
-			{
-				UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-				if (P3GameInstance != nullptr)
-				{
-					float DroppedExp = P3GameInstance->GetP3EnemyData(this->GetStatComponent()->GetLevel())->DropExp;
-					EventInstigatorActor->GetStatComponent()->AddExp(DroppedExp);
-				}
+		return FinalDamage;
+	}
 
-				// Give Dropped Item in this->Inventory to EventInstigatorActor's Inventory.
-				TArray<UP3Item*> DroppedItems = DropItem();
-				for (int32 i = 0; i < DroppedItems.Num(); ++i)
-				{
-					EventInstigatorActor->AddItem(DroppedItems[i]);
-				}
-			}
+	if (this->GetCharacterType() == ECharacterType::Enemy)
+	{
+		UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (P3GameInstance != nullptr)
+		{
+			float DroppedExp = P3GameInstance->GetP3EnemyData(this->GetStatComponent()->GetLevel())->DropExp;
+			EventInstigatorActor->GetStatComponent()->AddExp(DroppedExp);
+		}
+
+		// Give Dropped Item in this->Inventory to EventInstigatorActor's Inventory.
+		TArray<UP3Item*> DroppedItems = DropItem();
+		for (int32 i = 0; i < DroppedItems.Num(); ++i)
+		{
+			EventInstigatorActor->AddItem(DroppedItems[i]);
 		}
 	}
 	
