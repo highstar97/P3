@@ -126,6 +126,7 @@ void AP3Hero::Skill1()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Hero] : Can't Access to Controller."));
 	}
+	else
 	{
 		// DisableButtonSkill1 in HUD.
 		HeroController->GetHUDWidget()->SetEnableButtonSkill1(false);

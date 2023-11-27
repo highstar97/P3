@@ -14,24 +14,23 @@ void UP3InventoryComponent::AddItem(UP3Item* ItemToAdd, int32 NumOfItem)
 	if (ItemToAdd->GetType() == EItemType::NONE)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3InventoryComponent] : Wrong Item Added."));
+		return;
+	}
+	
+	FP3ItemInfo* FoundElement = FindItemInfo(ItemToAdd);
+
+	if (FoundElement)
+	{
+		FoundElement->Num += NumOfItem;
+		OnItemChanged.Broadcast(ItemToAdd);
 	}
 	else
 	{
-		FP3ItemInfo* FoundElement = FindItemInfo(ItemToAdd);
-
-		if (FoundElement)
-		{
-			FoundElement->Num += NumOfItem;
-			OnItemChanged.Broadcast(ItemToAdd);
-		}
-		else
-		{
-			FP3ItemInfo TempInfo;
-			TempInfo.Item = ItemToAdd;
-			TempInfo.Num = NumOfItem;
-			Inventory.Emplace(TempInfo);
-			OnItemAdded.Broadcast(ItemToAdd);
-		}
+		FP3ItemInfo TempInfo;
+		TempInfo.Item = ItemToAdd;
+		TempInfo.Num = NumOfItem;
+		Inventory.Emplace(TempInfo);
+		OnItemAdded.Broadcast(ItemToAdd);
 	}
 }
 

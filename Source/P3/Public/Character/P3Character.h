@@ -85,9 +85,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 
-	void AddItem(UP3Item* AddedItem);
-	TArray<UP3Item*> DropItem();
-
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, meta = (AllowPrivateAccess = "true"))
 		UP3StatComponent* StatComponent;

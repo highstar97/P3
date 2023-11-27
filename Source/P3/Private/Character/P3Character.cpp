@@ -439,22 +439,12 @@ float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* Even
 		}
 
 		// Give Dropped Item in this->Inventory to EventInstigatorActor's Inventory.
-		TArray<UP3Item*> DroppedItems = DropItem();
+		TArray<UP3Item*> DroppedItems = GetInventoryComponent()->RemoveRandomItems();
 		for (int32 i = 0; i < DroppedItems.Num(); ++i)
 		{
-			EventInstigatorActor->AddItem(DroppedItems[i]);
+			EventInstigatorActor->GetInventoryComponent()->AddItem(DroppedItems[i]);
 		}
 	}
 	
 	return FinalDamage;
-}
-
-void AP3Character::AddItem(UP3Item* AddedItem)
-{
-	GetInventoryComponent()->AddItem(AddedItem);
-}
-
-TArray<UP3Item*> AP3Character::DropItem()
-{
-	return GetInventoryComponent()->RemoveRandomItems();
 }
