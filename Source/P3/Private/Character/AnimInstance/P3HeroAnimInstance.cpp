@@ -44,26 +44,28 @@ void UP3HeroAnimInstance::PlayAttackMontage()
 {
 	if (P3Character->GetStateComponent()->GetbIsAttacking() == true) return;
 
+	float AttackSpeed = 2.0f;	// if AttackSpeed == 2.0f -> double Attack in a second
+
 	switch (P3Character->GetStateComponent()->GetAttackCount())
 	{
 	case 0:
 	{
-		Montage_Play(AttackMontage1, 1.0f);
+		Montage_Play(AttackMontage1, AttackSpeed);
 		break;
 	}
 	case 1:
 	{
-		Montage_Play(AttackMontage2, 1.0f);
+		Montage_Play(AttackMontage2, AttackSpeed);
 		break;
 	}
 	case 2:
 	{
-		Montage_Play(AttackMontage3, 1.0f);
+		Montage_Play(AttackMontage3, AttackSpeed);
 		break;
 	}
 	case 3:
 	{
-		Montage_Play(AttackMontage4, 1.0f);
+		Montage_Play(AttackMontage4, AttackSpeed);
 		break;
 	}
 	default:

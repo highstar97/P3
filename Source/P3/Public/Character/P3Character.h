@@ -71,7 +71,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void ShowDamageNumber(float NewDamageNumber);
-
+	
 	void DeleteTimer(FTimerHandle DeleteTimer);
 
 	UFUNCTION(BlueprintCallable)
@@ -109,6 +109,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
 		TSubclassOf<UP3DamageNumberWidget> DamageNumberWidgetClass;
+
+	UPROPERTY()
+		TArray<UP3DamageNumberWidget*> DamageNumberWidgetArray;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+		int32 DamageNumberWidgetIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<UInputMappingContext> DefaultMappingContext;

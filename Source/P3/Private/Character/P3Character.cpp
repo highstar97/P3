@@ -65,6 +65,8 @@ AP3Character::AP3Character()
 		DamageNumberWidgetClass = UI_DAMAGENUMBER.Class;
 	}
 
+	DamageNumberWidgetIndex = 0;
+
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (IMC_DEFAULT.Succeeded())
 	{
@@ -113,16 +115,17 @@ AP3Character::AP3Character()
 void AP3Character::BeginPlay()
 {
 	Super::BeginPlay();
-	if (AP3HeroController* HeroController = Cast<AP3HeroController>(Controller))
+	
+	if (AP3HeroController* CharacterController = Cast<AP3HeroController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(HeroController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(CharacterController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 
-		HeroController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
-		HeroController->GetHUDWidget()->BindCharacterBuff(GetBuffComponent());
-		HeroController->GetInventoryWidget()->BindInventory(GetInventoryComponent());
+		CharacterController->GetHUDWidget()->BindCharacterStat(GetStatComponent());
+		CharacterController->GetHUDWidget()->BindCharacterBuff(GetBuffComponent());
+		CharacterController->GetInventoryWidget()->BindInventory(GetInventoryComponent());
 	}
 
 	UP3HPBarWidget* HPBarWidget = Cast<UP3HPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
@@ -134,7 +137,27 @@ void AP3Character::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[P3Character] HPBarWidget is NULL."));
 	}
-	
+
+	for (int32 i = 0; i < 5; ++i)
+	{
+		UP3DamageNumberWidget* DamageNumberWidget;
+		if (IsPlayerControlled())
+		{
+			DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(Cast<AP3HeroController>(Controller), DamageNumberWidgetClass);
+		}
+		else
+		{
+			DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(GetWorld(), DamageNumberWidgetClass);
+		}
+
+		if (DamageNumberWidget)
+		{
+			DamageNumberWidgetArray.Add(DamageNumberWidget);
+			DamageNumberWidget->SetVisibility(ESlateVisibility::Hidden);
+			DamageNumberWidget->AddToViewport();
+		}
+	}
+
 	InitStat();
 	InitWeapon();
 	InitSkill();
@@ -285,29 +308,29 @@ void AP3Character::Look(const FInputActionValue& Value)
 
 void AP3Character::ShowDamageNumber(float NewDamageNumber)
 {
-	if (!GetWorld())
+	if (DamageNumberWidgetArray.Num() < 1)
 	{
 		return;
-	}
+	}	
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (!PlayerController)
-	{
-		return;
-	}
-
-	// Thinking about widget (object) pooling.
-	UP3DamageNumberWidget* DamageNumberWidget = CreateWidget<UP3DamageNumberWidget>(PlayerController, DamageNumberWidgetClass);
-	if (!DamageNumberWidget)
+	APlayerController* CharacterController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!CharacterController)
 	{
 		return;
 	}
 
 	FVector2D WidgetPosition;
-	UGameplayStatics::ProjectWorldToScreen(PlayerController, GetActorLocation(), WidgetPosition);
-	DamageNumberWidget->SetPositionInViewport(WidgetPosition);
-	DamageNumberWidget->SetDamageNumber(NewDamageNumber);
-	DamageNumberWidget->AddToViewport();
+	UGameplayStatics::ProjectWorldToScreen(CharacterController, GetActorLocation(), WidgetPosition);
+
+	UP3DamageNumberWidget* CurrentDamageNumberWidget = DamageNumberWidgetArray[++DamageNumberWidgetIndex];
+	if (DamageNumberWidgetIndex == DamageNumberWidgetArray.Num())
+	{
+		DamageNumberWidgetIndex = 0;
+	}
+
+	CurrentDamageNumberWidget->SetPositionInViewport(WidgetPosition);
+	CurrentDamageNumberWidget->SetDamageNumber(NewDamageNumber);
+	CurrentDamageNumberWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 // Move to another class (I don't think this function is appropriate for a character class).
