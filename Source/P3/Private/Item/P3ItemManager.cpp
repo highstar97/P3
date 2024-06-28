@@ -6,50 +6,15 @@
 
 UP3ItemManager::UP3ItemManager()
 {
-
-}
-
-void UP3ItemManager::Init(UP3GameInstance* GameInstance)
-{
-	if (GameInstance == nullptr)
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_P3Item(TEXT("/Game/GameData/P3ItemData.P3ItemData"));
+	if (DT_P3Item.Succeeded())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Access to P3GameInstance."));
-		return;
+		P3ItemDataTable = DT_P3Item.Object;
+		if (P3ItemDataTable->GetRowMap().Num() <= 0)
+		{
+			UE_LOG(LogAssetData, Warning, TEXT("[P3ItemManager] No data inside P3ItemDataTable."));
+		}
 	}
-
-	CurrentGameInstance = GameInstance;
-
-	if (!CreateHPPotion_Small())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Create HPPotion_Small."));
-	}
-
-	if (!CreateMPPotion_Small())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Create HPPotion_Small."));
-	}
-}
-
-bool UP3ItemManager::CreateHPPotion_Small()
-{
-	UP3Item* HPPotion_Small = NewObject<UP3HPPotion_Small>(this, FName("HPPotion_Small"));
-	if (HPPotion_Small->InitItemData(HPPotion_Small->GetItemData(CurrentGameInstance.Get())))
-	{
-		ItemMap.Emplace(HPPotion_Small->GetKey(), HPPotion_Small);
-		return true;
-	}
-	return false;
-}
-
-bool UP3ItemManager::CreateMPPotion_Small()
-{
-	UP3Item* MPPotion_Small = NewObject<UP3MPPotion_Small>(this, FName("MPPotion_Small"));
-	if (MPPotion_Small->InitItemData(MPPotion_Small->GetItemData(CurrentGameInstance.Get())))
-	{
-		ItemMap.Emplace(MPPotion_Small->GetKey(), MPPotion_Small);
-		return true;
-	}
-	return false;
 }
 
 UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey)
@@ -61,5 +26,35 @@ UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey)
 	else
 	{
 		return nullptr;
+	}
+}
+
+FP3ItemData* UP3ItemManager::GetItemDataFromDataTable(int32 KeyOfItem) const
+{
+	return P3ItemDataTable->FindRow<FP3ItemData>(*FString::FromInt(KeyOfItem), TEXT(""));
+}
+
+void UP3ItemManager::InitializeItems()
+{
+	if (!P3ItemDataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] P3ItemDataTable is not set."));
+		return;
+	}
+
+	TArray<FP3ItemData*> AllDatas;
+	P3ItemDataTable->GetAllRows(TEXT("P3ItemDataTable"), AllDatas);
+
+	for (const FP3ItemData* Data : AllDatas)
+	{
+		if (Data && Data->ItemClass)
+		{
+			UP3Item* NewItem = NewObject<UP3Item>(this, Data->ItemClass);
+			if (NewItem)
+			{
+				NewItem->ConstructItemFromData(Data);
+				ItemMap.Emplace(Data->Key, NewItem);
+			}
+		}
 	}
 }

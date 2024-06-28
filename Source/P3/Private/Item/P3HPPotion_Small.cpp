@@ -7,11 +7,6 @@
 #include "P3HPRegen.h"
 #include "Kismet/GameplayStatics.h"
 
-UP3HPPotion_Small::UP3HPPotion_Small()
-{
-	Key = 1;
-}
-
 void UP3HPPotion_Small::Use(AP3Character* User)
 {	
 	Super::Use(User);

@@ -7,11 +7,6 @@
 #include "P3MPRegen.h"
 #include "Kismet/GameplayStatics.h"
 
-UP3MPPotion_Small::UP3MPPotion_Small()
-{
-	Key = 2;
-}
-
 void UP3MPPotion_Small::Use(AP3Character* User)
 {
 	Super::Use(User);

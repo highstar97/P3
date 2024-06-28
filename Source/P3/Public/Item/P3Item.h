@@ -23,11 +23,13 @@ class P3_API UP3Item : public UObject
 	GENERATED_BODY()
 	
 public:
-	UP3Item();
+	UP3Item() : Key(-1), Name("ItemBase"), Image(nullptr), Type(EItemType::NONE) {};
 	virtual ~UP3Item();
 	
 	UFUNCTION(BlueprintCallable)
-		virtual void Use(AP3Character* User);
+	virtual void Use(AP3Character* User);
+
+	void ConstructItemFromData(const FP3ItemData* ItemData);
 
 	int32 GetKey() const { return Key; }
 	void SetKey(int32 NewKey) { Key = NewKey; }
@@ -41,19 +43,16 @@ public:
 	EItemType GetType() const { return Type; }
 	void SetType(EItemType NewType) { Type = NewType; }
 
-	bool InitItemData(FP3ItemData* ItemDataReference);
-	FP3ItemData* GetItemData(UP3GameInstance* GameInstance);
-
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		int32 Key;
+	int32 Key;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		FString Name;
+	FString Name;
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		UTexture2D* Image;
+	UTexture2D* Image;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		EItemType Type;
+	EItemType Type;
 };

@@ -12,7 +12,7 @@ class P3_API UP3HPPotion_Small : public UP3Item
 	GENERATED_BODY()
 	
 public:
-	UP3HPPotion_Small();
+	UP3HPPotion_Small() {};
 
 	virtual void Use(AP3Character* User) override;
 };
