@@ -1,9 +1,9 @@
 #include "P3InventoryWidget.h"
-#include "P3HeroController.h"
-#include "P3ItemImageWidget.h"
-#include "P3InventoryComponent.h"
-#include "P3Item.h"
+
 #include "Components/TileView.h"
+
+#include "P3InventoryComponent.h"
+#include "P3ItemImageWidget.h"
 
 void UP3InventoryWidget::BindInventory(UP3InventoryComponent* NewInventoryComponent)
 {
@@ -28,9 +28,9 @@ void UP3InventoryWidget::RemoveItem(UP3Item* ItemToRemove)
 
 void UP3InventoryWidget::UpdateItem(UP3Item* ItemToUpdate)
 {
-	for (auto EntryWidget : Tile_Items->GetDisplayedEntryWidgets())
+	auto ItemImageWidget = Cast<UP3ItemImageWidget>(Tile_Items->GetEntryWidgetFromItem(ItemToUpdate));
+	if (ItemImageWidget)
 	{
-		UP3ItemImageWidget* ItemImageWidget = Cast<UP3ItemImageWidget>(EntryWidget);
-		ItemImageWidget->SyncItemWithInventory(ItemImageWidget->GetInsertedItem());
+		ItemImageWidget->SyncItemWithInventory(ItemToUpdate);
 	}
 }

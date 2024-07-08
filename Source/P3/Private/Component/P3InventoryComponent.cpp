@@ -9,14 +9,7 @@ UP3InventoryComponent::UP3InventoryComponent()
 }
 
 void UP3InventoryComponent::AddItem(UP3Item* ItemToAdd, int32 NumOfItem)
-{
-	// If there is a unique item that only exists, an if statement must be added.
-	if (ItemToAdd->GetType() == EItemType::NONE)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3InventoryComponent] : Wrong Item Added."));
-		return;
-	}
-	
+{	
 	FP3ItemInfo* FoundElement = FindItemInfo(ItemToAdd);
 
 	if (FoundElement)
@@ -84,7 +77,7 @@ TArray<UP3Item*> UP3InventoryComponent::RemoveRandomItems()
 	int32 NumOfItemTypesToDrop = FMath::RandRange(1, Inventory.Num());
 	for (int32 i = 0; i < NumOfItemTypesToDrop; ++i)
 	{
-		int32 NumOfItemsToDrop = FMath::RandRange(1, Inventory[i].Num);
+		int32 NumOfItemsToDrop = FMath::RandRange(1, Inventory[i].Num - 1);
 		for (int32 j = 0; j < NumOfItemsToDrop; ++j)
 		{
 			DroppedItemArray.Emplace(RemoveItem(Inventory[i].Item));

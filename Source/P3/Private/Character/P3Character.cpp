@@ -3,6 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "InputMappingContext.h"
@@ -181,9 +182,6 @@ void AP3Character::PostInitializeComponents()
 
 	GetStatComponent()->OnHPIsZero.AddUObject(this, &AP3Character::Die);
 	GetStatComponent()->OnLevelUp.AddUObject(this, &AP3Character::LevelUp);
-	
-	GetBuffComponent()->OnHPRegenBuffStarted.AddUObject(this, &AP3Character::HPRegen);
-	GetBuffComponent()->OnMPRegenBuffStarted.AddUObject(this, &AP3Character::MPRegen);
 }
 
 void AP3Character::Jump()
@@ -196,208 +194,6 @@ void AP3Character::StopJumping()
 {
 	GetStateComponent()->SetbIsInAir(false);
 	Super::StopJumping();
-}
-
-void AP3Character::InitStat()
-{
-	
-}
-
-void AP3Character::InitWeapon()
-{
-	AP3Weapon* BasicSword = GetWeaponComponent()->SpawnBasicSword();
-	if (BasicSword != nullptr)
-	{
-		GetWeaponComponent()->EquipWeapon(BasicSword);
-	}
-}
-
-void AP3Character::InitSkill()
-{
-
-}
-
-void AP3Character::InitItem()
-{
-
-}
-
-void AP3Character::Attack()
-{
-	
-}
-
-void AP3Character::Skill1()
-{
-	
-}
-
-void AP3Character::Skill2()
-{
-
-}
-
-void AP3Character::Die()
-{
-	GetStateComponent()->SetbIsDead(true);
-	SetActorEnableCollision(false);
-	HPBarWidgetComponent->SetHiddenInGame(true);
-	GetWeaponComponent()->DestroyWeapon();
-	FTimerHandle DeadTimerHandle = {};
-	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
-		Destroy();
-		}), 3.0f, false);
-}
-
-float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
-{
-	if (!ensure(EventInstigator != nullptr)) return 0.0f;
-	if (!ensure(EventInstigatorActor != nullptr)) return 0.0f;
-
-	if (EventInstigatorActor->GetStatComponent()->GetLevelBasedCurrentData() == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Character] : When TakeDamage Instigator's StatComponent doesn't have LevelBasedCurrentStat."));
-		return 0.0f;
-	}
-
-	float InitialDamage = EventInstigatorActor->GetStatComponent()->GetAttack();
-
-	// Team Judgment
-	ECharacterType VictimType = this->GetCharacterType();
-	ECharacterType InstigatorType = EventInstigatorActor->GetCharacterType();
-	if (VictimType == ECharacterType::None || InstigatorType == ECharacterType::None || VictimType == InstigatorType) return 0.0f;
-
-	// Damage Logic : Damage = Attack
-	float FinalDamage = InitialDamage;
-	GetStatComponent()->TakeDamage(FinalDamage);
-
-	ShowDamageNumber(FinalDamage);
-
-	// Exp Logic
-	if (!GetStateComponent()->GetbIsDead() || !EventInstigator->IsPlayerController())
-	{
-		return FinalDamage;
-	}
-
-	if (this->GetCharacterType() == ECharacterType::Enemy)
-	{
-		UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		if (!ensure(P3GameInstance != nullptr)) return FinalDamage;
-		
-		float DroppedExp = P3GameInstance->GetP3EnemyData(this->GetStatComponent()->GetLevel())->DropExp;
-		EventInstigatorActor->GetStatComponent()->AddExp(DroppedExp);
-
-		TArray<UP3Item*> DroppedItems = GetInventoryComponent()->RemoveRandomItems(); // Give Dropped Item in this->Inventory to EventInstigatorActor's Inventory.
-		for (int32 i = 0; i < DroppedItems.Num(); ++i)
-		{
-			EventInstigatorActor->GetInventoryComponent()->AddItem(DroppedItems[i]);
-		}
-	}
-
-	return FinalDamage;
-}
-
-void AP3Character::LevelUp()
-{
-	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (!ensure(P3GameInstance != nullptr)) return;
-
-	int32 NextLevel = this->GetStatComponent()->GetLevel() + 1;
-	FP3CharacterData* LevelBasedData = P3GameInstance->GetP3HeroData(NextLevel);
-	GetStatComponent()->SetStatFromDataTable(NextLevel, LevelBasedData);
-}
-
-bool AP3Character::ConsumeMP(float UsedMP)
-{
-	float CalculatedMP = UsedMP;	// if character has buff/debuff, UsedMP can changed.
-	if (GetStatComponent()->GetCurrentMP() < CalculatedMP)
-	{
-		return false;
-	}
-	GetStatComponent()->ConsumeMP(CalculatedMP);
-	return true;
-}
-
-void AP3Character::HPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle)
-{
-	if (Duration == 0.0f)
-	{
-		GetStatComponent()->TakeDamage(-1 * TotalAmount);
-		return;
-	}
-
-	float RemainingTime = Duration;
-	float HPRegenPerSecond = TotalAmount / Duration;
-	FName RootSocket(TEXT("Root"));
-	UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-	GetStatComponent()->TakeDamage(-1 * HPRegenPerSecond);	// To HPRegen immediately when the skill starts.
-	FTimerHandle HPRegenTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(HPRegenTimerHandle, [this, RemainingTime, HPRegenPerSecond, RootSocket, NewParticle, HPRegenTimerHandle]()mutable -> void
-		{
-			if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
-			{
-				UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-				GetStatComponent()->TakeDamage(-1 * HPRegenPerSecond);
-			}
-			else
-			{
-				DeleteTimer(HPRegenTimerHandle);
-			}
-		}, 1.0f, true);
-}
-
-void AP3Character::MPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle)
-{
-	if (Duration == 0.0f)
-	{
-		GetStatComponent()->ConsumeMP(-1 * TotalAmount);
-	}
-
-	float RemainingTime = Duration;
-	float MPRegenPerSecond = TotalAmount / Duration;
-	FName RootSocket(TEXT("Root"));
-	if (NewParticle != nullptr)
-	{
-		UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-	}
-	GetStatComponent()->ConsumeMP(-1 * MPRegenPerSecond);	// To MPRegen immediately when the skill starts.
-	FTimerHandle MPRegenTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(MPRegenTimerHandle, [this, RemainingTime, MPRegenPerSecond, RootSocket, NewParticle, MPRegenTimerHandle]()mutable -> void
-		{
-			if (--RemainingTime > 0)	// if Duration is 10.0f ,This if statement loops 9 times every second.
-			{
-				if (NewParticle != nullptr)
-				{
-					UGameplayStatics::SpawnEmitterAttached(NewParticle, GetMesh(), RootSocket);
-				}
-				GetStatComponent()->ConsumeMP(-1 * MPRegenPerSecond);
-			}
-			else
-			{
-				DeleteTimer(MPRegenTimerHandle);
-			}
-		}, 1.0f, true);
-}
-
-void AP3Character::ShowDamageNumber(float NewDamageNumber)
-{
-	if (DamageNumberWidgetArray.Num() < 1) return;
-
-	APlayerController* CharacterController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (!ensure(CharacterController != nullptr)) return;
-
-	FVector2D WidgetPosition;
-	UGameplayStatics::ProjectWorldToScreen(CharacterController, GetActorLocation(), WidgetPosition);
-
-	UP3DamageNumberWidget* CurrentDamageNumberWidget = DamageNumberWidgetArray[DamageNumberWidgetIndex++];
-	if (DamageNumberWidgetIndex == DamageNumberWidgetArray.Num())
-	{
-		DamageNumberWidgetIndex = 0;
-	}
-
-	CurrentDamageNumberWidget->SetPositionInViewport(WidgetPosition);
-	CurrentDamageNumberWidget->SetDamageNumber(NewDamageNumber);
-	CurrentDamageNumberWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AP3Character::Move(const FInputActionValue& Value)
@@ -442,13 +238,133 @@ void AP3Character::Look(const FInputActionValue& Value)
 	}
 }
 
-void AP3Character::UpdateMaxWalkSpeed(float NewMaxWalkSpeed)
+void AP3Character::InitStat()
 {
-	GetCharacterMovement()->MaxWalkSpeed = NewMaxWalkSpeed;
+
 }
 
-// ToDo : Move to another class (I don't think this function is appropriate for a character class).
-void AP3Character::DeleteTimer(FTimerHandle DeleteTimer)
+void AP3Character::InitWeapon()
 {
-	GetWorld()->GetTimerManager().ClearTimer(DeleteTimer);
+	AP3Weapon* BasicSword = GetWeaponComponent()->SpawnBasicSword();
+	if (BasicSword != nullptr)
+	{
+		GetWeaponComponent()->EquipWeapon(BasicSword);
+	}
+}
+
+void AP3Character::InitSkill()
+{
+
+}
+
+void AP3Character::InitItem()
+{
+
+}
+
+void AP3Character::Attack()
+{
+	
+}
+
+void AP3Character::Skill1()
+{
+	
+}
+
+void AP3Character::Skill2()
+{
+
+}
+
+void AP3Character::Die()
+{
+	GetStateComponent()->SetbIsDead(true);
+	SetActorEnableCollision(false);
+	HPBarWidgetComponent->SetHiddenInGame(true);
+	GetWeaponComponent()->DestroyWeapon();
+	FTimerHandle DeadTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+		Destroy();
+		}), 3.0f, false);
+}
+
+void AP3Character::LevelUp()
+{
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!ensure(P3GameInstance != nullptr)) return;
+
+	int32 NextLevel = GetStatComponent()->GetLevel() + 1;
+	FP3CharacterData* CharacterDataBasedOnLevel = P3GameInstance->GetP3HeroData(NextLevel);
+	if (!ensure(CharacterDataBasedOnLevel != nullptr)) return;
+
+	GetStatComponent()->ChangeLevel(NextLevel);
+	GetStatComponent()->ChangeCharacterDataBasedOnLevel(CharacterDataBasedOnLevel);
+}
+
+bool AP3Character::ConsumeMP(const float InitialUsedMP)
+{
+	float FinalUsedMP = InitialUsedMP;
+
+	if (GetStatComponent()->ConsumeMP(FinalUsedMP)) return true;
+	return false;
+}
+
+float AP3Character::ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor)
+{
+	if (!ensure(EventInstigator != nullptr)) return 0.0f;
+	if (!ensure(EventInstigatorActor != nullptr)) return 0.0f;
+	if (!ensure(EventInstigatorActor->GetStatComponent()->GetCharacterDataBasedOnLevel() != nullptr)) return 0.0f;
+
+	float InitialDamage = EventInstigatorActor->GetStatComponent()->GetAttack();
+
+	// Team Judgment TODO : Change it to Tag
+	ECharacterType VictimType = this->GetCharacterType();
+	ECharacterType InstigatorType = EventInstigatorActor->GetCharacterType();
+	if (VictimType == ECharacterType::None || InstigatorType == ECharacterType::None || VictimType == InstigatorType) return 0.0f;
+
+	// Damage Logic : Damage = Attack
+	float FinalDamage = InitialDamage;
+	GetStatComponent()->TakeDamage(FinalDamage);
+
+	ShowDamageNumber(FinalDamage);
+
+	// Exp Logic
+	if (GetCharacterType() == ECharacterType::Enemy && GetStateComponent()->GetbIsDead() && EventInstigator->IsPlayerController())
+	{
+		UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (!ensure(P3GameInstance != nullptr)) return FinalDamage;
+
+		float DroppedExp = P3GameInstance->GetP3EnemyData(GetStatComponent()->GetLevel())->DropExp;
+		EventInstigatorActor->GetStatComponent()->GainExp(DroppedExp);
+
+		// Give Item in this Actor's inventory to EventInstigator Actor's Inventory.
+		TArray<UP3Item*> DroppedItems = GetInventoryComponent()->RemoveRandomItems();
+		for (int32 i = 0; i < DroppedItems.Num(); ++i)
+		{
+			EventInstigatorActor->GetInventoryComponent()->AddItem(DroppedItems[i]);
+		}
+	}
+	return FinalDamage;
+}
+
+void AP3Character::ShowDamageNumber(float NewDamageNumber)
+{
+	if (DamageNumberWidgetArray.Num() < 1) return;
+
+	APlayerController* CharacterController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!ensure(CharacterController != nullptr)) return;
+
+	FVector2D WidgetPosition;
+	UGameplayStatics::ProjectWorldToScreen(CharacterController, GetActorLocation(), WidgetPosition);
+
+	UP3DamageNumberWidget* CurrentDamageNumberWidget = DamageNumberWidgetArray[DamageNumberWidgetIndex++];
+	if (DamageNumberWidgetIndex == DamageNumberWidgetArray.Num())
+	{
+		DamageNumberWidgetIndex = 0;
+	}
+
+	CurrentDamageNumberWidget->SetPositionInViewport(WidgetPosition);
+	CurrentDamageNumberWidget->SetDamageNumber(NewDamageNumber);
+	CurrentDamageNumberWidget->SetVisibility(ESlateVisibility::Visible);
 }

@@ -28,10 +28,10 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		UP3Item* Item;
+	UP3Item* Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		int32 Num;
+	int32 Num;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -58,5 +58,5 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
-		TArray<FP3ItemInfo> Inventory;
+	TArray<FP3ItemInfo> Inventory;
 };

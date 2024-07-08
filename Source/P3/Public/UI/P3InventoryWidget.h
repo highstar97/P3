@@ -19,13 +19,15 @@ public:
 	UP3InventoryComponent* GetCurrentInventoryComponent() { return CurrentInventoryComponent.Get(); }
 
 	void AddItem(UP3Item* ItemToAdd);
+
 	UFUNCTION(BlueprintCallable)
-		void RemoveItem(UP3Item* ItemToRemove);
+	void RemoveItem(UP3Item* ItemToRemove);
+
 	void UpdateItem(UP3Item* ItemToUpdate);
 
 private:
 	TWeakObjectPtr<UP3InventoryComponent> CurrentInventoryComponent = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-		UTileView* Tile_Items;
+	UTileView* Tile_Items;
 };

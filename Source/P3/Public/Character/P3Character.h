@@ -13,6 +13,7 @@ class UP3StateComponent;
 class UP3SkillComponent;
 class UP3WeaponComponent;
 class UP3BuffComponent;
+class UParticleSystemComponent;
 class UP3InventoryComponent;
 class UWidgetComponent;
 class UP3DamageNumberWidget;
@@ -62,6 +63,10 @@ protected:
 	virtual void Jump() override;
 
 	virtual void StopJumping() override;
+
+	void Move(const FInputActionValue& Value);
+
+	void Look(const FInputActionValue& Value);
 	
 protected:
 	virtual void InitStat();
@@ -80,29 +85,19 @@ protected:
 
 	virtual void Die();	
 
+protected:
+	void LevelUp();
+
+	bool ConsumeMP(const float InitialUsedMP);
+
 	UFUNCTION(BlueprintCallable)
 	float ApplyDamage(AController* EventInstigator, AP3Character* EventInstigatorActor);
 
-	void LevelUp();
-
-	bool ConsumeMP(float UsedMP);
-
-	void HPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle);
-
-	void MPRegen(float Duration, float TotalAmount, UParticleSystem* NewParticle);
-
+private:
 	void ShowDamageNumber(float NewDamageNumber);
 
-	void Move(const FInputActionValue& Value);
-
-	void Look(const FInputActionValue& Value);
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateMaxWalkSpeed(float NewMaxWalkSpeed);
-
-	void DeleteTimer(FTimerHandle DeleteTimer);
-
 private:
+	// Components
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	UP3StatComponent* StatComponent;
 

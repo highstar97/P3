@@ -44,7 +44,7 @@ void UP3HeroAnimInstance::PlayAttackMontage()
 {
 	if (P3Character->GetStateComponent()->GetbIsAttacking() == true) return;
 
-	float AttackSpeed = 2.0f;	// if AttackSpeed == 2.0f -> double Attack in a second
+	float AttackSpeed = 1.0f;	// if AttackSpeed == 2.0f -> double Attack in a second
 
 	switch (P3Character->GetStateComponent()->GetAttackCount())
 	{

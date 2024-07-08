@@ -1,19 +1,18 @@
-#include "P3MPRegen.h"
+#include "Buff/P3MPRegen.h"
+
+#include "Character/P3Character.h"
 
 UP3MPRegen::UP3MPRegen()
 {
-	static ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE_MPRegen(TEXT("/Game/GameData/Images/Image_HealMP.Image_HealMP"));
-	if (IMAGE_MPRegen.Succeeded())
-	{
-		Image = IMAGE_MPRegen.Object;
-	}
+	
+}
 
-	BuffType = EBuffType::MPREGEN;
-}	
-
-void UP3MPRegen::InitBuffData(FString NewName, float NewDuration, float NewTotalAmount)
+void UP3MPRegen::Apply(AP3Character* Character)
 {
-	Name = NewName;
-	Duration = NewDuration;
-	TotalAmount = NewTotalAmount;
+	Super::Apply(Character);
+}
+
+void UP3MPRegen::Remove(AP3Character* Character)
+{
+	Super::Remove(Character);
 }

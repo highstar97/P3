@@ -1,5 +1,7 @@
 #include "P3GameInstance.h"
+
 #include "P3ItemManager.h"
+#include "P3BuffManager.h"
 
 UP3GameInstance::UP3GameInstance()
 {
@@ -43,8 +45,11 @@ UP3GameInstance::UP3GameInstance()
 		}
 	}
 
-	ItemManager = NewObject<UP3ItemManager>();
+	ItemManager = NewObject<UP3ItemManager>();	// TODO : how about change SmartPointer
 	ItemManager->InitializeItems();
+
+	BuffManager = NewObject<UP3BuffManager>();
+	BuffManager->InitializeBuffs();
 }
 
 void UP3GameInstance::Init()

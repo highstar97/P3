@@ -3,6 +3,7 @@
 #include "P3HeroAnimInstance.h"
 #include "P3GameInstance.h"
 #include "P3ItemManager.h"
+#include "Buff/P3BuffManager.h"
 #include "P3StatComponent.h"
 #include "P3StateComponent.h"
 #include "P3SkillComponent.h"
@@ -49,11 +50,13 @@ AP3Hero::AP3Hero()
 void AP3Hero::InitStat()
 {
 	Super::InitStat();
+
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (P3GameInstance != nullptr)
 	{
-		FP3CharacterData* LevelBasedStatData = P3GameInstance->GetP3HeroData(1);
-		GetStatComponent()->SetStatFromDataTable(1, LevelBasedStatData);
+		int32 Level = GetStatComponent()->GetLevel();
+		FP3CharacterData* CharacterDataBasedOnLevel = P3GameInstance->GetP3HeroData(Level);
+		GetStatComponent()->ChangeCharacterDataBasedOnLevel(CharacterDataBasedOnLevel);
 	}
 	else
 	{
@@ -241,9 +244,9 @@ void AP3Hero::Skill2()
 		}), GetSkillComponent()->GetSkill2CoolTime(), false);
 
 	// Skill2
-	UP3HPRegen* HPRegenBuff = NewObject<UP3HPRegen>();
-	HPRegenBuff->InitBuffData(FString::Printf(TEXT("Skill2's HPRegen")), 10.0f, 200.0f);
-	GetBuffComponent()->ApplyBuff(HPRegenBuff);
+	UP3GameInstance* GameInstance = Cast<UP3GameInstance>(GetGameInstance());
+	UP3BuffManager* BuffManager = GameInstance->GetBuffManager();
+	GetBuffComponent()->AddBuff(BuffManager->GetBuffByKey(3)->CreateCopy());
 }
 
 void AP3Hero::Die()

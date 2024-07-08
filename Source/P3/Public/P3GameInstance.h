@@ -7,6 +7,7 @@
 
 class UDataTable;
 class UP3ItemManager;
+class UP3BuffManager;
 
 // FP3CharacterData is used for Hero, but since it serves as the parent of Enemy, Character name is used instead of Hero to clarify the inheritance structure.
 USTRUCT(BlueprintType)
@@ -18,19 +19,19 @@ public:
 	FP3CharacterData() : Level(1), MaxHP(3000.0f), MaxMP(2000.0f), Attack(150.0f), RequiredExp(100) {}
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	int32 Level;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float MaxHP;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float MaxMP;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float Attack;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float RequiredExp;
 };
 
@@ -56,13 +57,13 @@ public:
 	FP3SkillData() : Level(1), NeededMP(10.0f), CoolTime(1.0f) {}
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	int32 Level;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float NeededMP;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float CoolTime;
 };
 
@@ -86,6 +87,8 @@ public:
 
 	FORCEINLINE UP3ItemManager* GetItemManager() const { return ItemManager; }
 
+	FORCEINLINE UP3BuffManager* GetBuffManager() const { return BuffManager; }
+
 private:
 	UPROPERTY()
 	TObjectPtr<UDataTable> P3HeroDataTable;
@@ -101,4 +104,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UP3ItemManager> ItemManager;
+
+	UPROPERTY()
+	TObjectPtr<UP3BuffManager> BuffManager;
 };

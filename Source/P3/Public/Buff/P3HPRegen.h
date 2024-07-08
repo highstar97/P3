@@ -12,11 +12,7 @@ class P3_API UP3HPRegen : public UP3Buff
 public:	
 	UP3HPRegen();
 
-	float GetTotalAmount() const { return TotalAmount; }
+	virtual void Apply(AP3Character* Character) override;
 
-	void InitBuffData(FString NewName, float NewDuration, float NewTotalAmount);
-
-private:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
-		float TotalAmount;
+	virtual void Remove(AP3Character* Character) override;
 };

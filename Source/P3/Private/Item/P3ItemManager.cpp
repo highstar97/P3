@@ -1,8 +1,7 @@
 #include "P3ItemManager.h"
+
 #include "P3GameInstance.h"
 #include "P3Item.h"
-#include "P3HPPotion_Small.h"
-#include "P3MPPotion_Small.h"
 
 UP3ItemManager::UP3ItemManager()
 {
@@ -15,23 +14,6 @@ UP3ItemManager::UP3ItemManager()
 			UE_LOG(LogAssetData, Warning, TEXT("[P3ItemManager] No data inside P3ItemDataTable."));
 		}
 	}
-}
-
-UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey)
-{
-	if (ItemMap.Contains(ItemKey))
-	{
-		return ItemMap[ItemKey];
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
-FP3ItemData* UP3ItemManager::GetItemDataFromDataTable(int32 KeyOfItem) const
-{
-	return P3ItemDataTable->FindRow<FP3ItemData>(*FString::FromInt(KeyOfItem), TEXT(""));
 }
 
 void UP3ItemManager::InitializeItems()
@@ -56,5 +38,17 @@ void UP3ItemManager::InitializeItems()
 				ItemMap.Emplace(Data->Key, NewItem);
 			}
 		}
+	}
+}
+
+UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey) const
+{
+	if (ItemMap.Contains(ItemKey))
+	{
+		return ItemMap[ItemKey];
+	}
+	else
+	{
+		return nullptr;
 	}
 }

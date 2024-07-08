@@ -12,6 +12,7 @@ void UP3HUDWidget::BindCharacterStat(UP3StatComponent* NewStatComponent)
 	{
 		CurrentStatComponent = NewStatComponent;
 		NewStatComponent->OnHPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_HP);
+		NewStatComponent->OnShieldChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_HP);
 		NewStatComponent->OnMPChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_MP);
 		NewStatComponent->OnExpChanged.AddUObject(this, &UP3HUDWidget::UpdateHUDWidget_Exp);
 	}
@@ -103,7 +104,7 @@ void UP3HUDWidget::UpdateHUDWidget_HP()
 		if (ProgressBar_HP != nullptr)
 		{
 			ProgressBar_HP->SetPercent(CurrentStatComponent->GetHPRatio());
-			Text_CurrentHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetCurrentHP()))));
+			Text_CurrentHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetCurrentHP() + CurrentStatComponent->GetShield()))));
 			Text_MaxHP->SetText(FText::FromString(FString::FromInt(FMath::Floor(CurrentStatComponent->GetMaxHP()))));
 		}
 		else

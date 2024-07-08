@@ -31,8 +31,9 @@ void AP3Enemy::InitStat()
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (P3GameInstance != nullptr)
 	{
-		FP3CharacterData* LevelBasedData = P3GameInstance->GetP3EnemyData(1);
-		GetStatComponent()->SetStatFromDataTable(1, LevelBasedData);
+		int32 Level = GetStatComponent()->GetLevel();
+		FP3CharacterData* CharacterDataBasedOnLevel = P3GameInstance->GetP3EnemyData(Level);
+		GetStatComponent()->ChangeCharacterDataBasedOnLevel(CharacterDataBasedOnLevel);
 	}
 	else
 	{

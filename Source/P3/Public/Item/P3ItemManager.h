@@ -6,8 +6,8 @@
 #include "P3Item.h"
 #include "P3ItemManager.generated.h"
 
-class UP3GameInstance;
 class UDataTable;
+class UP3Buff;
 
 USTRUCT(BlueprintType)
 struct FP3ItemData : public FTableRowBase
@@ -15,23 +15,26 @@ struct FP3ItemData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FP3ItemData() : Key(0), Name(""), Path(""), Type(EItemType::NONE), ItemClass(nullptr) {}
+	FP3ItemData() : Key(0), Name(""), TexturePath(""), Type(EItemType::None), ItemClass(nullptr), BuffKeyArray({}) {}
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	int32 Key;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	FString Name;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
-	FString Path;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	FString TexturePath;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	EItemType Type;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TSubclassOf<UP3Item> ItemClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TArray<int32> BuffKeyArray;
 };
 
 UCLASS()
@@ -45,14 +48,12 @@ public:
 	void InitializeItems();
 
     UFUNCTION(BlueprintCallable, Category = "Item")
-    UP3Item* GetItemByKey(int32 ItemKey);
-
-	FORCEINLINE FP3ItemData* GetItemDataFromDataTable(int32 KeyOfItem) const;
+    UP3Item* GetItemByKey(int32 ItemKey) const;
 
 private:
 	UPROPERTY()
 	TObjectPtr<UDataTable> P3ItemDataTable;
 
     UPROPERTY()
-    TMap<int32, UP3Item*> ItemMap;
+    TMap<int32, UP3Item*> ItemMap;	// 캐쉬로 변경
 };

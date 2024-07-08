@@ -10,21 +10,4 @@
 void UP3MPPotion_Small::Use(AP3Character* User)
 {
 	Super::Use(User);
-	if (User == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3MPPotion_Small] : Can't Find Character to use Item."));
-		return;
-	}
-
-	if (User->GetStatComponent()->GetCurrentMP() == User->GetStatComponent()->GetMaxMP())
-	{
-		return;
-	}
-
-	UP3MPRegen* MPRegenBuff = NewObject<UP3MPRegen>();
-	MPRegenBuff->InitBuffData(FString::Printf(TEXT("P3MPPotion's MPRegen")), 5.0f, 50.0f);
-	if (User->GetBuffComponent()->ApplyBuff(MPRegenBuff))
-	{
-		User->GetInventoryComponent()->RemoveItem(this);
-	}
 }
