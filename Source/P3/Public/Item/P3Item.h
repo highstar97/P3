@@ -11,49 +11,53 @@ class AP3Character;
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	NONE		UMETA(DisplayName = "None"),
-	WEAPON		UMETA(DisplayName = "Weapon"),
-	CONSUMABLE	UMETA(DisplayName = "Consumable"),
-	JUNK		UMETA(DisplayName = "Junk")
+	None		UMETA(DisplayName = "None"),
+	Weapon		UMETA(DisplayName = "Weapon"),
+	Consumable	UMETA(DisplayName = "Consumable"),
+	Junk		UMETA(DisplayName = "Junk")
 };
 
 UCLASS(BlueprintType)
 class P3_API UP3Item : public UObject
 {
 	GENERATED_BODY()
-	
+
 public:
-	UP3Item();
-	virtual ~UP3Item();
-	
+	UP3Item() : Key(-1), Name("ItemBase"), Image(nullptr), Type(EItemType::None) {};
+
 	UFUNCTION(BlueprintCallable)
-		virtual void Use(AP3Character* User);
+	void Use(AP3Character* User);
 
-	int32 GetKey() const { return Key; }
-	void SetKey(int32 NewKey) { Key = NewKey; }
+	void ConstructItemFromData(const FP3ItemData* ItemData);
 
-	FString GetName() const { return Name; }
-	void SetName(FString Newname) { Name = Newname; }
+	FORCEINLINE int32 GetKey() const { return Key; }
+	FORCEINLINE void SetKey(const int32 NewKey) { Key = NewKey; }
 
-	UTexture2D* GetImage() const { return Image; }
-	void SetImage(UTexture2D* NewImage) { Image = NewImage; }
+	FORCEINLINE FString GetName() const { return Name; }
+	FORCEINLINE void SetName(const FString& NewName) { Name = NewName; }
 
-	EItemType GetType() const { return Type; }
-	void SetType(EItemType NewType) { Type = NewType; }
+	FORCEINLINE UTexture2D* GetImage() const { return Image; }
+	FORCEINLINE void SetImage(UTexture2D* NewImage) { Image = NewImage; }
 
-	bool InitItemData(FP3ItemData* ItemDataReference);
-	FP3ItemData* GetItemData(UP3GameInstance* GameInstance);
+	FORCEINLINE EItemType GetType() const { return Type; }
+	FORCEINLINE void SetType(const EItemType NewType) { Type = NewType; }
+
+	FORCEINLINE TArray<int32> GetBuffKeyArray() const { return BuffKeyArray; }
+	FORCEINLINE void SetBuffKeyArray(const TArray<int32>& NewBuffKeyArray) { BuffKeyArray.Append(NewBuffKeyArray); }
 
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		int32 Key;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
+	int32 Key;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		FString Name;
-	
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		UTexture2D* Image;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
+	FString Name;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-		EItemType Type;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* Image;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
+	EItemType Type;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
+	TArray<int32> BuffKeyArray;
 };

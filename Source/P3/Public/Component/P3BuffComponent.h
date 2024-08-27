@@ -4,12 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "P3BuffComponent.generated.h"
 
+class AP3Character;
 class UP3Buff;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffStartedDelegate, UP3Buff*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuffFinishedDelegate, UP3Buff*);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHPRegenBuffStartedDelegate, float, float, UParticleSystem*);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnMPRegenBuffStartedDelegate, float, float, UParticleSystem*);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class P3_API UP3BuffComponent : public UActorComponent
@@ -18,26 +17,24 @@ class P3_API UP3BuffComponent : public UActorComponent
 
 public:	
 	UP3BuffComponent();
-
-	void ExecuteHPRegenEffect(UP3Buff* HPRegenBuff);
-	void ExecuteMPRegenEffect(UP3Buff* MPRegenBuff);
-
-	void StartBuffTimer(UP3Buff* Buff);
-
-	bool IsBuffDuplicated(UP3Buff* BuffBeCheckedDuplication);
 	
-	bool ApplyBuff(UP3Buff* NewBuff);
-	bool RemoveBuff(UP3Buff* RemovedBuff);
+	bool AddBuff(UP3Buff* BuffToAdd);
 
+	UFUNCTION()
+	void RemoveBuff(UP3Buff* BuffToRemove);
+
+public:
 	FOnBuffStartedDelegate OnBuffStarted;
+
 	FOnBuffFinishedDelegate OnBuffFinished;
-	FOnHPRegenBuffStartedDelegate OnHPRegenBuffStarted;
-	FOnMPRegenBuffStartedDelegate OnMPRegenBuffStarted;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Buff, meta = (AllowPrivateAccess = "true"))
-		TArray<UP3Buff*> Buffs;
+	UPROPERTY(VisibleAnywhere, Category = "Buff | Owner")
+	TWeakObjectPtr<AP3Character> OwnerCharacter;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Buff", meta = (AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<UP3Buff>> ActiveBuffs;
 };

@@ -3,11 +3,11 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
-#include "P3Item.h"
 #include "P3GameInstance.generated.h"
 
 class UDataTable;
 class UP3ItemManager;
+class UP3BuffManager;
 
 // FP3CharacterData is used for Hero, but since it serves as the parent of Enemy, Character name is used instead of Hero to clarify the inheritance structure.
 USTRUCT(BlueprintType)
@@ -19,20 +19,20 @@ public:
 	FP3CharacterData() : Level(1), MaxHP(3000.0f), MaxMP(2000.0f), Attack(150.0f), RequiredExp(100) {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		int32 Level;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	int32 Level;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float MaxHP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float MaxHP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float MaxMP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float MaxMP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float Attack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float Attack;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float RequiredExp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float RequiredExp;
 };
 
 USTRUCT(BlueprintType)
@@ -44,8 +44,8 @@ public:
 	FP3EnemyData() : DropExp(20.0f) {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float DropExp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Data)
+	float DropExp;
 };
 
 USTRUCT(BlueprintType)
@@ -57,36 +57,14 @@ public:
 	FP3SkillData() : Level(1), NeededMP(10.0f), CoolTime(1.0f) {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		int32 Level;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	int32 Level;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float NeededMP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float NeededMP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		float CoolTime;
-};
-
-USTRUCT(BlueprintType)
-struct FP3ItemData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	FP3ItemData() : Key(0), Name(""), Path(""), Type(EItemType::NONE) {}
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		int32 Key;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		FString Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		FString Path;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-		EItemType Type;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float CoolTime;
 };
 
 UCLASS()
@@ -99,31 +77,34 @@ public:
 
 	virtual void Init() override;
 
-	FP3CharacterData* GetP3HeroData(int32 FromLevel);
-	FP3EnemyData* GetP3EnemyData(int32 FromLevel);
-	FP3SkillData* GetHeroSkill1Data(int32 FromLevel);
-	FP3SkillData* GetHeroSkill2Data(int32 FromLevel);
-	FP3ItemData* GetP3ItemData(int32 KeyOfItem);
-	UP3ItemManager* GetItemManager();
+	FORCEINLINE FP3CharacterData* GetP3HeroData(int32 FromLevel) const;
 
-	int32 GetNumOfP3ItemDataTable() { return P3ItemDataTable->GetRowMap().Num(); }
+	FORCEINLINE FP3EnemyData* GetP3EnemyData(int32 FromLevel) const;
+
+	FORCEINLINE FP3SkillData* GetHeroSkill1Data(int32 FromLevel) const;
+
+	FORCEINLINE FP3SkillData* GetHeroSkill2Data(int32 FromLevel) const;
+
+	FORCEINLINE UP3ItemManager* GetItemManager() const { return ItemManager; }
+
+	FORCEINLINE UP3BuffManager* GetBuffManager() const { return BuffManager; }
 
 private:
 	UPROPERTY()
-		UDataTable* P3HeroDataTable;
+	TObjectPtr<UDataTable> P3HeroDataTable;
 
 	UPROPERTY()
-		UDataTable* P3EnemyDataTable;
+	TObjectPtr<UDataTable> P3EnemyDataTable;
 
 	UPROPERTY()
-		UDataTable* HeroSkill1DataTable;
+	TObjectPtr<UDataTable> HeroSkill1DataTable;
 
 	UPROPERTY()
-		UDataTable* HeroSkill2DataTable;
+	TObjectPtr<UDataTable> HeroSkill2DataTable;
 
 	UPROPERTY()
-		UDataTable* P3ItemDataTable;
+	TObjectPtr<UP3ItemManager> ItemManager;
 
 	UPROPERTY()
-		UP3ItemManager* ItemManager;
+	TObjectPtr<UP3BuffManager> BuffManager;
 };

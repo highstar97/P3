@@ -1,23 +1,25 @@
 #include "P3Hero.h"
-#include "P3HeroController.h"
-#include "P3HeroAnimInstance.h"
-#include "P3GameInstance.h"
-#include "P3ItemManager.h"
-#include "P3StatComponent.h"
-#include "P3StateComponent.h"
-#include "P3SkillComponent.h"
-#include "P3InventoryComponent.h"
-#include "P3WeaponComponent.h"
-#include "P3BuffComponent.h"
-#include "P3Buff.h"
-#include "P3HPRegen.h"
-#include "P3Item.h"
-#include "P3HUDWidget.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+#include "P3GameInstance.h"
+#include "P3HeroController.h"
+#include "P3HeroAnimInstance.h"
+#include "Component/P3StatComponent.h"
+#include "Component/P3StateComponent.h"
+#include "Component/P3SkillComponent.h"
+#include "Component/P3InventoryComponent.h"
+#include "Component/P3WeaponComponent.h"
+#include "Component/P3BuffComponent.h"
+#include "Item/P3ItemManager.h"
+#include "Item/P3Item.h"
+#include "Buff/P3BuffManager.h"
+#include "Buff/P3Buff.h"
+#include "P3HUDWidget.h"
 
 AP3Hero::AP3Hero()
 {
@@ -49,11 +51,13 @@ AP3Hero::AP3Hero()
 void AP3Hero::InitStat()
 {
 	Super::InitStat();
+
 	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (P3GameInstance != nullptr)
 	{
-		FP3CharacterData* LevelBasedStatData = P3GameInstance->GetP3HeroData(1);
-		GetStatComponent()->SetStatFromDataTable(1, LevelBasedStatData);
+		int32 Level = GetStatComponent()->GetLevel();
+		FP3CharacterData* CharacterDataBasedOnLevel = P3GameInstance->GetP3HeroData(Level);
+		GetStatComponent()->ChangeCharacterDataBasedOnLevel(CharacterDataBasedOnLevel);
 	}
 	else
 	{
@@ -241,9 +245,9 @@ void AP3Hero::Skill2()
 		}), GetSkillComponent()->GetSkill2CoolTime(), false);
 
 	// Skill2
-	UP3HPRegen* HPRegenBuff = NewObject<UP3HPRegen>();
-	HPRegenBuff->InitBuffData(FString::Printf(TEXT("Skill2's HPRegen")), 10.0f, 200.0f);
-	GetBuffComponent()->ApplyBuff(HPRegenBuff);
+	UP3GameInstance* GameInstance = Cast<UP3GameInstance>(GetGameInstance());
+	UP3BuffManager* BuffManager = GameInstance->GetBuffManager();
+	GetBuffComponent()->AddBuff(BuffManager->GetBuffByKey(3)->CreateCopy());
 }
 
 void AP3Hero::Die()

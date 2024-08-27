@@ -1,49 +1,44 @@
-#include "P3Item.h"
+#include "Item/P3Item.h"
+
 #include "P3GameInstance.h"
-#include "P3Character.h"
-
-UP3Item::UP3Item()
-{
-	Key = 0;
-	Name = "Item";
-	Image = nullptr;
-	Type = EItemType::NONE;
-}
-
-UP3Item::~UP3Item()
-{
-
-}
+#include "Character/P3Character.h"
+#include "Component/P3InventoryComponent.h"
+#include "Component/P3BuffComponent.h"
+#include "Item/P3ItemManager.h"
+#include "Buff/P3BuffManager.h"
+#include "Buff/P3Buff.h"
 
 void UP3Item::Use(AP3Character* User)
 {
+	UWorld* World = User->GetWorld();
 
+	UP3GameInstance* P3GameInstance = Cast<UP3GameInstance>(World->GetGameInstance());
+
+	UP3BuffManager* BuffManager = P3GameInstance->GetBuffManager();
+	UP3InventoryComponent* InventoryComponent = User->GetInventoryComponent();
+	UP3BuffComponent* BuffComponent = User->GetBuffComponent();
+	
+	for (const int32 BuffKey : BuffKeyArray)
+	{
+		UP3Buff* BuffToAdd = BuffManager->GetBuffByKey(BuffKey)->CreateCopy();
+		if (BuffToAdd && BuffComponent->AddBuff(BuffToAdd))
+		{
+			InventoryComponent->RemoveItem(this);
+			return;
+		}
+	}
 }
 
-bool UP3Item::InitItemData(FP3ItemData* ItemDataReference)
+// must be called in consturctor, because using ConstructorHelpers
+void UP3Item::ConstructItemFromData(const FP3ItemData* ItemData)
 {
-	if (ItemDataReference == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3Item] : Can't Load ItemData. Check Key."));
-		return false;
-	}
-
-	this->SetName(ItemDataReference->Name);
-	ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE(*ItemDataReference->Path);
+	SetKey(ItemData->Key);
+	SetName(ItemData->Name);
+	ConstructorHelpers::FObjectFinder<UTexture2D> IMAGE(*ItemData->TexturePath);
 	if (IMAGE.Succeeded())
 	{
-		this->SetImage(IMAGE.Object);
+		SetImage(IMAGE.Object);
 	}
-	this->SetType(ItemDataReference->Type);
-	return true;
-}
-
-FP3ItemData* UP3Item::GetItemData(UP3GameInstance* GameInstance)
-{
-	FP3ItemData* ItemData = GameInstance->GetP3ItemData(this->GetKey());
-	if (ItemData == nullptr)
-	{
-		return nullptr;
-	}
-	return ItemData;
+	SetType(ItemData->Type);
+	SetBuffKeyArray(ItemData->BuffKeyArray);
 }

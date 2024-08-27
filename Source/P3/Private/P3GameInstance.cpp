@@ -1,5 +1,7 @@
 #include "P3GameInstance.h"
+
 #include "P3ItemManager.h"
+#include "P3BuffManager.h"
 
 UP3GameInstance::UP3GameInstance()
 {
@@ -9,7 +11,7 @@ UP3GameInstance::UP3GameInstance()
 		P3HeroDataTable = DT_P3Hero.Object;
 		if (P3HeroDataTable->GetRowMap().Num() <= 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside P3HeroDataTable."));
+			UE_LOG(LogAssetData, Warning, TEXT("[P3GameInstance] No data inside P3HeroDataTable."));
 		}
 	}
 
@@ -19,7 +21,7 @@ UP3GameInstance::UP3GameInstance()
 		P3EnemyDataTable = DT_P3Enemy.Object;
 		if (P3EnemyDataTable->GetRowMap().Num() <= 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside P3EnemyDataTable."));
+			UE_LOG(LogAssetData, Warning, TEXT("[P3GameInstance] No data inside P3EnemyDataTable."));
 		}
 	}
 
@@ -29,7 +31,7 @@ UP3GameInstance::UP3GameInstance()
 		HeroSkill1DataTable = DT_HeroSKILL1.Object;
 		if (HeroSkill1DataTable->GetRowMap().Num() <= 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside HeroSkill1DataTable."));
+			UE_LOG(LogAssetData, Warning, TEXT("[P3GameInstance] No data inside HeroSkill1DataTable."));
 		}
 	}
 
@@ -39,22 +41,15 @@ UP3GameInstance::UP3GameInstance()
 		HeroSkill2DataTable = DT_HeroSKILL2.Object;
 		if (HeroSkill2DataTable->GetRowMap().Num() <= 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside HeroSkill2DataTable."));
+			UE_LOG(LogAssetData, Warning, TEXT("[P3GameInstance] No data inside HeroSkill2DataTable."));
 		}
 	}
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> DT_P3Item(TEXT("/Game/GameData/P3ItemData.P3ItemData"));
-	if (DT_P3Item.Succeeded())
-	{
-		P3ItemDataTable = DT_P3Item.Object;
-		if (P3ItemDataTable->GetRowMap().Num() <= 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[P3GameInstance] No data inside P3ItemDataTable."));
-		}
-	}
+	ItemManager = NewObject<UP3ItemManager>();	// TODO : how about change SmartPointer
+	ItemManager->InitializeItems();
 
-	ItemManager = GetItemManager();
-	ItemManager->Init(this);
+	BuffManager = NewObject<UP3BuffManager>();
+	BuffManager->InitializeBuffs();
 }
 
 void UP3GameInstance::Init()
@@ -62,36 +57,22 @@ void UP3GameInstance::Init()
 	Super::Init();
 }
 
-FP3CharacterData* UP3GameInstance::GetP3HeroData(int32 FromLevel)
+FP3CharacterData* UP3GameInstance::GetP3HeroData(int32 FromLevel) const
 {
 	return P3HeroDataTable->FindRow<FP3CharacterData>(*FString::FromInt(FromLevel), TEXT(""));
 }
 
-FP3EnemyData* UP3GameInstance::GetP3EnemyData(int32 FromLevel)
+FP3EnemyData* UP3GameInstance::GetP3EnemyData(int32 FromLevel) const
 {
 	return P3EnemyDataTable->FindRow<FP3EnemyData>(*FString::FromInt(FromLevel), TEXT(""));
 }
 
-FP3SkillData* UP3GameInstance::GetHeroSkill1Data(int32 FromLevel)
+FP3SkillData* UP3GameInstance::GetHeroSkill1Data(int32 FromLevel) const
 {
 	return HeroSkill1DataTable->FindRow<FP3SkillData>(*FString::FromInt(FromLevel), TEXT(""));
 }
 
-FP3SkillData* UP3GameInstance::GetHeroSkill2Data(int32 FromLevel)
+FP3SkillData* UP3GameInstance::GetHeroSkill2Data(int32 FromLevel) const
 {
 	return HeroSkill2DataTable->FindRow<FP3SkillData>(*FString::FromInt(FromLevel), TEXT(""));
-}
-
-FP3ItemData* UP3GameInstance::GetP3ItemData(int32 KeyOfItem)
-{
-	return P3ItemDataTable->FindRow<FP3ItemData>(*FString::FromInt(KeyOfItem), TEXT(""));
-}
-
-UP3ItemManager* UP3GameInstance::GetItemManager()
-{
-	if (!ItemManager)
-	{
-		ItemManager = NewObject<UP3ItemManager>();
-	}
-	return ItemManager;
 }

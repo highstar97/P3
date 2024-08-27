@@ -15,7 +15,7 @@ class P3_API UP3BuffImageWidget : public UUserWidget, public IUserObjectListEntr
 protected:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-private:
+private:	
 	UPROPERTY(meta = (BindWidget))
-		UImage* Image_Buff;
+	UImage* Image_Buff;
 };

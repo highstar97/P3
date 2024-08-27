@@ -1,58 +1,47 @@
 #include "P3ItemManager.h"
+
 #include "P3GameInstance.h"
 #include "P3Item.h"
-#include "P3HPPotion_Small.h"
-#include "P3MPPotion_Small.h"
 
 UP3ItemManager::UP3ItemManager()
 {
-
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_P3Item(TEXT("/Game/GameData/P3ItemData.P3ItemData"));
+	if (DT_P3Item.Succeeded())
+	{
+		P3ItemDataTable = DT_P3Item.Object;
+		if (P3ItemDataTable->GetRowMap().Num() <= 0)
+		{
+			UE_LOG(LogAssetData, Warning, TEXT("[P3ItemManager] No data inside P3ItemDataTable."));
+		}
+	}
 }
 
-void UP3ItemManager::Init(UP3GameInstance* GameInstance)
+void UP3ItemManager::InitializeItems()
 {
-	if (GameInstance == nullptr)
+	if (!P3ItemDataTable)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Access to P3GameInstance."));
+		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] P3ItemDataTable is not set."));
 		return;
 	}
 
-	CurrentGameInstance = GameInstance;
+	TArray<FP3ItemData*> AllDatas;
+	P3ItemDataTable->GetAllRows(TEXT("P3ItemDataTable"), AllDatas);
 
-	if (!CreateHPPotion_Small())
+	for (const FP3ItemData* Data : AllDatas)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Create HPPotion_Small."));
-	}
-
-	if (!CreateMPPotion_Small())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[P3ItemManager] : Can't Create HPPotion_Small."));
+		if (Data)
+		{
+			UP3Item* NewItem = NewObject<UP3Item>(this);
+			if (NewItem)
+			{
+				NewItem->ConstructItemFromData(Data);
+				ItemMap.Emplace(Data->Key, NewItem);
+			}
+		}
 	}
 }
 
-bool UP3ItemManager::CreateHPPotion_Small()
-{
-	UP3Item* HPPotion_Small = NewObject<UP3HPPotion_Small>(this, FName("HPPotion_Small"));
-	if (HPPotion_Small->InitItemData(HPPotion_Small->GetItemData(CurrentGameInstance.Get())))
-	{
-		ItemMap.Emplace(HPPotion_Small->GetKey(), HPPotion_Small);
-		return true;
-	}
-	return false;
-}
-
-bool UP3ItemManager::CreateMPPotion_Small()
-{
-	UP3Item* MPPotion_Small = NewObject<UP3MPPotion_Small>(this, FName("MPPotion_Small"));
-	if (MPPotion_Small->InitItemData(MPPotion_Small->GetItemData(CurrentGameInstance.Get())))
-	{
-		ItemMap.Emplace(MPPotion_Small->GetKey(), MPPotion_Small);
-		return true;
-	}
-	return false;
-}
-
-UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey)
+UP3Item* UP3ItemManager::GetItemByKey(int32 ItemKey) const
 {
 	if (ItemMap.Contains(ItemKey))
 	{
