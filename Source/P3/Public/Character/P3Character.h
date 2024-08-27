@@ -99,25 +99,25 @@ private:
 private:
 	// Components
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	UP3StatComponent* StatComponent;
+	TObjectPtr<UP3StatComponent> StatComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-	UP3StateComponent* StateComponent;
+	TObjectPtr<UP3StateComponent> StateComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill", meta = (AllowPrivateAccess = "true"))
-	UP3SkillComponent* SkillComponent;
+	TObjectPtr<UP3SkillComponent> SkillComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	UP3WeaponComponent* WeaponComponent;
+	TObjectPtr<UP3WeaponComponent> WeaponComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Buff", meta = (AllowPrivateAccess = "true"))
-	UP3BuffComponent* BuffComponent;
+	TObjectPtr<UP3BuffComponent> BuffComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	UP3InventoryComponent* InventoryComponent;
+	TObjectPtr<UP3InventoryComponent> InventoryComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* HPBarWidgetComponent;
+	TObjectPtr<UWidgetComponent> HPBarWidgetComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
 	ECharacterType CharacterType = ECharacterType::None;
@@ -127,7 +127,7 @@ private:
 	TSubclassOf<UP3DamageNumberWidget> DamageNumberWidgetClass;
 	
 	UPROPERTY()
-	TArray<UP3DamageNumberWidget*> DamageNumberWidgetArray;
+	TArray<TObjectPtr<UP3DamageNumberWidget>> DamageNumberWidgetArray;
 
 	int32 DamageNumberWidgetIndex;
 	

@@ -52,5 +52,5 @@ private:
 	TObjectPtr<UDataTable> P3ItemDataTable;
 
     UPROPERTY()
-    TMap<int32, UP3Item*> ItemMap;	// 캐쉬로 변경
+    TMap<int32, TObjectPtr<UP3Item>> ItemMap;	// TODO : Change it to Cache.
 };

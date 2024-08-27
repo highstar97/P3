@@ -53,7 +53,7 @@ protected:
 	FString Name;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
-	UTexture2D* Image;
+	TObjectPtr<UTexture2D> Image;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
 	EItemType Type;

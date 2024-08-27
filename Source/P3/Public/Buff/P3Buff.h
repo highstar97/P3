@@ -135,8 +135,8 @@ protected:
 	FGameplayTagContainer TagContainer;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Buff", meta = (AllowPrivateAccess = "true"))
-	UTexture2D* Image;
+	TObjectPtr<UTexture2D> Image;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Buff", meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* Particle;
+	TObjectPtr<UParticleSystem> Particle;
 };

@@ -53,5 +53,5 @@ private:
 	TObjectPtr<UDataTable> P3BuffDataTable;
 
 	UPROPERTY()
-	TMap<int32, UP3Buff*> BuffMap;
+	TMap<int32, TObjectPtr<UP3Buff>> BuffMap;
 };
