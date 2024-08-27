@@ -28,9 +28,9 @@ void UP3BuffManager::InitializeBuffs()
 
 	for (const FP3BuffData* Data : AllDatas)
 	{
-		if (Data && Data->BuffClass)
+		if (Data)
 		{
-			UP3Buff* NewBuff = NewObject<UP3Buff>(this, Data->BuffClass);
+			UP3Buff* NewBuff = NewObject<UP3Buff>(this);
 			if (NewBuff)
 			{
 				NewBuff->ConstructBuffFromData(Data);

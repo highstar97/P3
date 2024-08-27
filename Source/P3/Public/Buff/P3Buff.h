@@ -88,13 +88,12 @@ class P3_API UP3Buff : public UObject
 	
 public:
 	UP3Buff() : Key(-1), bIsCopy(false), Name("BuffBase"), NumericData(FNumericData()), TagContainer(FGameplayTagContainer::EmptyContainer), Image(nullptr), Particle(nullptr) {};
-	virtual ~UP3Buff();
 
-	virtual void Apply(AP3Character* Character);
+	void Apply(AP3Character* Character);
 	
-	virtual void Remove(AP3Character* Character);
+	void Remove(AP3Character* Character);
 
-	virtual UP3Buff* CreateCopy();
+	UP3Buff* CreateCopy();
 
 	void ConstructBuffFromData(const FP3BuffData* BuffData);
 

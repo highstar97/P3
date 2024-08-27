@@ -29,9 +29,9 @@ void UP3ItemManager::InitializeItems()
 
 	for (const FP3ItemData* Data : AllDatas)
 	{
-		if (Data && Data->ItemClass)
+		if (Data)
 		{
-			UP3Item* NewItem = NewObject<UP3Item>(this, Data->ItemClass);
+			UP3Item* NewItem = NewObject<UP3Item>(this);
 			if (NewItem)
 			{
 				NewItem->ConstructItemFromData(Data);

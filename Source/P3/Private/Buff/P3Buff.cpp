@@ -6,11 +6,6 @@
 #include "Component/P3StatComponent.h"
 #include "Buff/P3BuffManager.h"
 
-UP3Buff::~UP3Buff()
-{
-
-}
-
 void UP3Buff::Apply(AP3Character* Character)
 {
 	if (TagContainer.HasTag(FGameplayTag::RequestGameplayTag(FName("Stat"))))

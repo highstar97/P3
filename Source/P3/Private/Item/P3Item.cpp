@@ -8,11 +8,6 @@
 #include "Buff/P3BuffManager.h"
 #include "Buff/P3Buff.h"
 
-UP3Item::~UP3Item()
-{
-
-}
-
 void UP3Item::Use(AP3Character* User)
 {
 	UWorld* World = User->GetWorld();

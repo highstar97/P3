@@ -15,7 +15,7 @@ struct FP3ItemData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FP3ItemData() : Key(0), Name(""), TexturePath(""), Type(EItemType::None), ItemClass(nullptr), BuffKeyArray({}) {}
+	FP3ItemData() : Key(0), Name(""), TexturePath(""), Type(EItemType::None), BuffKeyArray({}) {}
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
@@ -29,9 +29,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	EItemType Type;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TSubclassOf<UP3Item> ItemClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<int32> BuffKeyArray;

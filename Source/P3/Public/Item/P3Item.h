@@ -24,10 +24,9 @@ class P3_API UP3Item : public UObject
 
 public:
 	UP3Item() : Key(-1), Name("ItemBase"), Image(nullptr), Type(EItemType::None) {};
-	virtual ~UP3Item();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Use(AP3Character* User);
+	void Use(AP3Character* User);
 
 	void ConstructItemFromData(const FP3ItemData* ItemData);
 

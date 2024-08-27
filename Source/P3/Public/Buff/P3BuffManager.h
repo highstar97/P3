@@ -14,7 +14,7 @@ struct FP3BuffData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FP3BuffData() : Key(0), Name(""), NumericData(FNumericData()), TagContainer(FGameplayTagContainer::EmptyContainer), TexturePath(""), ParticlePath(""), BuffClass(nullptr) {}
+	FP3BuffData() : Key(0), Name(""), NumericData(FNumericData()), TagContainer(FGameplayTagContainer::EmptyContainer), TexturePath(""), ParticlePath("") {}
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
@@ -34,9 +34,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	FString ParticlePath;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TSubclassOf<UP3Buff> BuffClass;
 };
 
 UCLASS()
